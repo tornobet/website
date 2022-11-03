@@ -1,0 +1,429 @@
+@font-face {
+    font-family: "Qatar2022";
+    src: url('/fonts/Qatar2022.eot');
+    src: url('/fontsQatar2022.eot?#iefix') format('embedded-opentype'),
+    url('/fonts/Qatar2022.woff2') format('woff2'),
+    url('/fonts/Qatar2022.woff') format('woff'),
+    url('/fonts/Qatar2022.ttf') format('truetype');
+}
+
+$white: #F0ECE9;
+$black: #000;
+$gray-100: #7f8596;
+$gray-200: #7F8596;
+$gray-700: #2c2f39;
+$gray-800: #22252D;
+$gray-900: #1f2128;
+$green: #30b28c;
+$orange: #E45F35;
+
+$purpule: #540166;
+$pink: #CE234E;
+$yellow: #F9BA08;
+
+$primary: $black;
+$secondary: $white;
+
+$accordion-bg: transparent;
+$accordion-border-width: 0;
+$accordion-button-padding-y: 0;
+$accordion-button-padding-x: 0;
+$accordion-button-active-bg: transparent;
+$accordion-padding-y: 0;
+$accordion-padding-x: 0;
+$accordion-border-radius: 0;
+$accordion-icon-color: $pink;
+$accordion-icon-active-color: $pink;
+$accordion-icon-transform: rotate(-180deg);
+
+$border-radius: 8px;
+
+$dropdown-min-width: 300px;
+$dropdown-padding-x: 24px;
+$dropdown-padding-y: 24px;
+$dropdown-border-radius: $border-radius;
+
+@import "../node_modules/bootstrap/scss/bootstrap";
+
+
+nput::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+.uneditable-input:focus {
+    border: none;
+    box-shadow: 0;
+    outline: 0 none;
+}
+
+body {
+    background: $purpule;
+    font-family: 'Qatar2022', sans-serif;
+}
+
+p {
+    color: $white;
+}
+
+.ml-1 {
+    margin-left: 8px;
+}
+
+.text-overflow-hidden {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.row {
+    margin-bottom: 160px;
+
+    @include media-breakpoint-down(md) {
+        margin-bottom: 80px;
+    }
+
+    &.no-margin {
+        margin-bottom: 0;
+    }
+}
+
+.container {
+    @include media-breakpoint-up(xl) {
+        max-width: 1100px;
+    }
+    @include media-breakpoint-down(sm) {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
+}
+
+h1 {
+    font-size: 64px;
+    font-weight: 700;
+    color: $white;
+
+    @include media-breakpoint-down(lg) {
+        margin-bottom: 48px;
+    }
+    @include media-breakpoint-down(sm) {
+        font-size: 48px;
+    }
+}
+
+h6, .h6, h5, .h5, h4, .h4, h3, .h3, h2, .h2, h1, .h1 {
+    font-weight: 900;
+}
+
+h2 {
+    color: $pink;
+}
+
+.highlight {
+    &.yellow {
+        color: $yellow;
+    }
+}
+
+.header {
+    padding: 32px 0 80px 0;
+
+    @include media-breakpoint-down(sm) {
+        padding: 32px 0 48px 0;
+    }
+
+    .navbar {
+        @include media-breakpoint-down(sm) {
+            justify-content: center;
+        }
+    }
+
+    .wallet {
+        border-radius: 8px;
+        //border: 1px solid $white;
+
+        @include media-breakpoint-down(sm) {
+            margin-top: 24px;
+        }
+
+        .wallet-avatar {
+            padding: 0 8px 0 2px;
+        }
+
+        .wallet-code {
+            line-height: 0;
+            font-weight: 500;
+            padding: 0 8px 0 0;
+
+            &:before {
+                content: "";
+                display: inline-block;
+                width: 12px;
+                height: 12px;
+                margin-right: 8px;
+                border-radius: 50%;
+                background: $green;
+            }
+        }
+    }
+}
+
+.forcast-box {
+    padding: 24px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+    background-color: $white;
+
+    .countdown {
+        margin-top: 24px;
+
+        > div {
+            min-width: 54px;
+            margin: 0 2px;
+        }
+
+        .countdown-value {
+            font-size: 1.1em;
+            line-height: 1;
+            font-weight: 700;
+        }
+
+        .countdown-unit {
+            font-size: 0.75em;
+        }
+    }
+}
+
+.steps-wrapper {
+    .steps-item {
+        &.sm-my-4 {
+            @include media-breakpoint-down(md) {
+                margin: 32px 0;
+            }
+        }
+    }
+
+    .steps-item-img {
+        max-width: 140px;
+    }
+
+    .steps-item-number {
+        position: relative;
+        width: 40px;
+        height: 40px;
+        color: $pink;
+        font-weight: 900;
+        border-radius: 50%;
+        align-items: center;
+        margin: -24px auto 24px auto;
+        background-color: $white;
+    }
+
+    .h4 {
+        color: $white;
+        padding: 0 24px;
+        font-weight: 400;
+    }
+}
+
+.box {
+    position: relative;
+    width: 100%;
+    padding: 48px;
+    background: $white;
+    border-radius: 16px;
+
+    @include media-breakpoint-down(sm) {
+        padding: 24px;
+    }
+
+    p {
+        color: $black;
+        font-size: 1.1em;
+    }
+
+    .md-mb-4 {
+        @include media-breakpoint-down(md) {
+            margin-top: 8px;
+        }
+    }
+
+    .flag-small {
+        width: 40px;
+        margin-right: 8px;
+    }
+
+    .row-border {
+        padding: 16px 0;
+        border-bottom: 1px solid #54016638;
+
+        &.no-border {
+            border: none;
+        }
+    }
+}
+
+.item {
+    border-bottom: 1px solid #ce234e80;
+
+    .h4 {
+        color: $white;
+        padding: 32px 0;
+        margin-bottom: 0;
+        font-size: 1.5rem;
+    }
+
+    p {
+        font-size: 1.2rem;
+        padding-bottom: 16px;
+    }
+
+    .plus {
+        width: 40px;
+        height: 40px;
+        padding: 4px;
+        margin-left: 24px;
+        line-height: 0;
+        border-radius: 12px;
+        background-color: $pink;
+
+        .click {
+            transform: rotate(45deg);
+            transition: all .15s ease;
+        }
+    }
+}
+
+.match-subheader-content {
+    width: 100%;
+    padding: 48px 0 68px 0;
+    color: $white;
+    background: url('../images/pattern.jpg') repeat;
+
+    .vs {
+        color: $yellow;
+        margin-top: 34px;
+
+        @include media-breakpoint-down(sm) {
+            margin-top: 20px;
+        }
+    }
+
+    img.flag {
+        @include media-breakpoint-down(sm) {
+            width: 100px;
+        }
+    }
+
+    .countdown {
+        margin-top: 40px;
+
+        > div {
+            min-width: 64px;
+            margin: 0 2px;
+        }
+
+        .countdown-value {
+            font-size: 1.5em;
+            line-height: 1;
+            font-weight: 700;
+        }
+
+        .countdown-unit {
+            font-size: 0.875em;
+        }
+    }
+}
+
+.quantity {
+    padding: 2px;
+    border-radius: 8px;
+    background-color: $white;
+    border: 1px solid $black;
+
+    .count {
+        width: 68px;
+        font-size: 1.1em;
+        line-height: 0;
+        font-weight: 700;
+        border: 0;
+        background: none;
+    }
+
+    .quantity-btn {
+        width: 32px;
+        height: 32px;
+        padding: 8px;
+        line-height: 0;
+        cursor: pointer;
+        border-radius: 8px;
+
+        &:hover {
+            background-color: $pink;
+
+            svg {
+                fill: $white;
+            }
+        }
+    }
+}
+
+.match-container {
+    position: relative;
+    width: 100%;
+    background: $white;
+    margin-top: -32px;
+    padding: 48px 0 80px 0;
+    border-radius: 50px 50px 0 0;
+
+    .form-check {
+        margin-bottom: 16px;
+    }
+
+    .line {
+        &:after {
+            content: "";
+            display: inline-block;
+            width: 100%;
+            height: 1px;
+            background: $pink;
+            vertical-align: middle;
+        }
+    }
+}
+
+.footer {
+    margin: 160px 0 80px 0;
+
+    @include media-breakpoint-down(sm) {
+        margin: 80px 0 80px 0;
+    }
+
+    a {
+        width: 48px;
+        height: 48px;
+        align-items: center;
+        background: $white;
+        border-radius: 50%;
+    }
+}
