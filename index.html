@@ -4,103 +4,459 @@
 <head>
     <meta charset="UTF-8">
     <title>Tornobet</title>
-    <link rel="StyleSheet" href="scss/style.css" />
+    <link rel="icon" type="image/svg+xml" href="./images/favicon.svg">
+    <link rel="icon" type="image/png" href="./images/favicon.png">
+    <link rel="StyleSheet" href="scss/style.css"/>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+    <script src="./tokenPriceApi.js"></script>
+    <script src="./global.js"></script>
+    <script src="./index.js"></script>
 </head>
 
 <body>
-    <div class="container">
-        <div class="header">
-            <nav class="navbar">
-                <a class="navbar-brand" href="#">
-                    <img src="images/logo.png" alt="" width="200">
-                </a>
-            </nav>
-        </div>
-        <div class="hero-title row d-flex align-items-center">
-            <div class="col-lg-5">
-                <h1><span class="highlight yellow">Forecast</span> 2022 FIFA World Cup and <span
-                        class="highlight yellow">win BNB!</span></h1>
-            </div>
-            <div class="col-lg-7">
-                <img src="images/hero.jpg" class="img-fluid" alt="">
-            </div>
-        </div>
+<div class="alert alert-fixed alert-danger position-fixed d-none" id="js-top-fixed-error" role="alert"></div>
 
-        <div class="row steps-wrapper text-center">
-            <div class="col-md-4 steps-item justify-content-center">
-                <img class="steps-item-img" src="images/1.png" alt="">
-                <div class="steps-item-number d-flex justify-content-center">
-                    1
+<div class="container">
+    <div class="header">
+        <nav class="navbar">
+            <a class="navbar-brand" href="#">
+                <img src="images/logo.svg" alt="" width="180">
+            </a>
+            <div class="toast align-items-center text-white bg-primary border-0" id="theToast" role="alert"
+                 aria-live="assertive" aria-atomic="true">
+                <div class="d-flex">
+                    <div class="toast-body" id="js-toast-text"></div>
+                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                            aria-label="Close"></button>
                 </div>
-                <div class="h4">Choose the game you want to predict</div>
             </div>
-            <div class="col-md-4 steps-item sm-my-4 justify-content-center">
-                <img class="steps-item-img" src="images/2.png" alt="">
-                <div class="steps-item-number obn d-flex justify-content-center">
-                    2
-                </div>
-                <div class="h4">Determine amount of BNB and predict the result</div>
-            </div>
-            <div class="col-md-4 steps-item justify-content-center">
-                <img class="steps-item-img" src="images/3.png" alt="">
-                <div class="steps-item-number d-flex justify-content-center">
-                    3
-                </div>
-                <div class="h4">Withdraw the amount you won after winning</div>
-            </div>
-        </div>
+            <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#theModal">
+        Launch demo modal
+    </button> -->
 
-        <div class="row">
-            <div class="col">
-                <h2>About Tornobet</h2>
-                <p class="fs-5">
-                    With Tornobet you can bet on various sports competitions. As the 2022 FIFA World Cup Qatar
-                    approaches, all attention is drawn to this important tournament.
-                    Whether you are a sports fan or a seasoned bettor, you will find a variety of odds on the Tornobet
-                    online betting platform.
-                </p>
+            <div class="modal fade" id="theModal" tabindex="-1" aria-labelledby="theModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-sm modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                    id="js-modal-close"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img src="/images/bsc.svg" alt="" width="120px" height="120px" id="js-modal-image">
+                            <svg width="120px" height="120px" viewBox="0 0 97 86" id="js-modal-icon">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                      d="M97 43C97 66.748 77.748 86 54 86C43 86 43 86 43 86V0H54C77.748 0 97 19.252 97 43Z"
+                                      fill="#AAABAE"></path>
+                                <path d="M95.8311 53C91.3235 71.9254 74.3052 86 54 86H43V53H95.8311Z"
+                                      fill="#797C81"></path>
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                      d="M86 43C86 66.748 66.748 86 43 86C19.252 86 0 66.748 0 43C0 19.252 19.252 0 43 0C66.748 0 86 19.252 86 43Z"
+                                      fill="#D9DADC"></path>
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                      d="M75 43C75 60.673 60.673 75 43 75C25.327 75 11 60.673 11 43C11 25.327 25.327 11 43 11C60.673 11 75 25.327 75 43Z"
+                                      fill="white"></path>
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                      d="M25.799 10.207C26.2132 10.9245 25.9674 11.8419 25.25 12.2561C19.8533 15.3719 15.3719 19.8533 12.2561 25.25C11.8419 25.9674 10.9245 26.2132 10.207 25.799C9.48961 25.3848 9.2438 24.4674 9.65801 23.75C13.0371 17.8972 17.8973 13.0371 23.75 9.658C24.4674 9.24379 25.3848 9.4896 25.799 10.207Z"
+                                      fill="white"></path>
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                      d="M9.3088 27.6327C10.0758 27.9457 10.4439 28.8212 10.1309 29.5882L10.0782 29.7181C9.76828 30.4864 8.89422 30.8579 8.12596 30.548C7.3577 30.238 6.98616 29.364 7.2961 28.5957C7.31507 28.5487 7.33413 28.5017 7.35327 28.4548C7.66625 27.6878 8.54177 27.3197 9.3088 27.6327Z"
+                                      fill="white"></path>
+                                <path
+                                        d="M58.7782 46L59.8891 47.1109C61.4621 48.6839 61.9326 51.0495 61.0813 53.1048C60.23 55.16 58.2245 56.5 56 56.5H49C47.1694 56.5 45.5478 55.6057 44.548 54.2302L43.8891 54.8891C42.8576 55.9205 41.4587 56.5 40 56.5H33L44.548 46H58.7782Z"
+                                        fill="#797C81"></path>
+                                <path
+                                        d="M33 29.5H40C41.4587 29.5 42.8576 30.0795 43.8891 31.1109L44.548 31.7698C45.5478 30.3943 47.1694 29.5 49 29.5H56C58.2245 29.5 60.23 30.84 61.0813 32.8952C61.9326 34.9504 61.4621 37.3161 59.8891 38.8891L55.7782 43L58.7782 46H49.5L33 29.5Z"
+                                        fill="#AAABAE"></path>
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                      d="M29.1109 31.1109C31.2588 28.963 34.7412 28.963 36.8891 31.1109L41 35.2218L45.1109 31.1109C47.2588 28.963 50.7412 28.963 52.8891 31.1109C55.037 33.2588 55.037 36.7412 52.8891 38.8891L48.7782 43L52.8891 47.1109C55.037 49.2588 55.037 52.7412 52.8891 54.8891C50.7412 57.037 47.2588 57.037 45.1109 54.8891L41 50.7782L36.8891 54.8891C34.7412 57.037 31.2588 57.037 29.1109 54.8891C26.963 52.7412 26.963 49.2588 29.1109 47.1109L33.2218 43L29.1109 38.8891C26.963 36.7412 26.963 33.2588 29.1109 31.1109Z"
+                                      fill="#D9DADC"></path>
+                            </svg>
+                            <div class="fs-5 my-4" id="js-modal-text"></div>
+                            <a href="#" target="_blank" class="btn btn-primary mb-4" id="js-modal-link"></a>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
 
-        <div class="footer">
-            <div class="d-flex justify-content-center">
-                <a href="https://twitter.com/tornobet" class="d-flex justify-content-center mx-3" target="_blank"
-                    rel="noreferrer">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#22252D">
+            <div class="wallet btn btn-outline-secondary d-flex align-items-center placeholder" id="js-not-signed">
+                <img class="wallet-avatar" src="images/fox.svg" alt="">
+                <div>Connect</div>
+            </div>
+            <div class="wallet btn-group d-none" id="js-signed">
+                <button type="button"
+                        class="btn-nav-transparent d-flex justify-content-between align-items-center dropdown-toggle"
+                        data-bs-toggle="dropdown" id="dropdownMenuClickableInside" data-bs-auto-close="outside"
+                        aria-expanded="false">
+                    <svg width="24" height="24" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"
+                         aria-hidden="true" role="presentation" focusable="false"
+                         style="stroke: #F0ECE9; stroke-width: 3; margin-right: 8px">
+                        <g fill="none" fill-rule="nonzero">
+                            <path d="m2 16h28"></path>
+                            <path d="m2 24h28"></path>
+                            <path d="m2 8h28"></path>
+                        </g>
+                    </svg>
+                    <svg width="32" height="32" viewBox="0 0 32 32" fill="#F0ECE9"
+                         xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false">
                         <path
-                            d="M24.075 4.325c-.9.375-1.8.675-2.85.75 1.05-.6 1.8-1.575 2.175-2.7-.975.6-2.025.975-3.15 1.2C19.35 2.6 18.075 2 16.725 2c-2.7 0-4.95 2.175-4.95 4.95 0 .375.075.75.15 1.125C7.8 7.85 4.2 5.9 1.725 2.9a4.72 4.72 0 0 0-.675 2.475c0 1.725.9 3.225 2.175 4.125-.825 0-1.575-.225-2.25-.6v.075c0 2.4 1.725 4.35 3.975 4.8-.45.075-.825.15-1.275.15-.3 0-.6 0-.9-.075.6 1.95 2.475 3.375 4.575 3.45-1.65 1.35-3.825 2.1-6.15 2.1-.375 0-.825 0-1.2-.075 2.25 1.35 4.875 2.175 7.65 2.175 9.075 0 14.025-7.5 14.025-14.025v-.6c.9-.75 1.725-1.575 2.4-2.55z">
+                                d="m16 .7c-8.437 0-15.3 6.863-15.3 15.3s6.863 15.3 15.3 15.3 15.3-6.863 15.3-15.3-6.863-15.3-15.3-15.3zm0 28c-4.021 0-7.605-1.884-9.933-4.81a12.425 12.425 0 0 1 6.451-4.4 6.507 6.507 0 0 1 -3.018-5.49c0-3.584 2.916-6.5 6.5-6.5s6.5 2.916 6.5 6.5a6.513 6.513 0 0 1 -3.019 5.491 12.42 12.42 0 0 1 6.452 4.4c-2.328 2.925-5.912 4.809-9.933 4.809z">
                         </path>
                     </svg>
-                </a>
-                <a href="https://instagram.com/tornobet" class="d-flex justify-content-center mx-3" target="_blank"
-                    rel="noreferrer">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#22252D">
-                        <path
-                            d="M12 15.8a3.8 3.8 0 1 0 0-7.6 3.8 3.8 0 0 0-3.291 5.7A3.8 3.8 0 0 0 12 15.8h0zM16.749.6h-9.5A6.66 6.66 0 0 0 .6 7.251v9.5A6.66 6.66 0 0 0 7.251 23.4h9.5a6.66 6.66 0 0 0 6.649-6.651v-9.5A6.66 6.66 0 0 0 16.749.6zM12 17.7A5.71 5.71 0 0 1 6.3 12 5.71 5.71 0 0 1 12 6.3a5.71 5.71 0 0 1 5.7 5.7 5.71 5.71 0 0 1-5.7 5.7zm6.65-11.4a.95.95 0 0 1 0-1.9.95.95 0 1 1 0 1.9z">
-                        </path>
-                    </svg>
-                </a>
-                <a href="https://t.me/tornobet" class="d-flex justify-content-center mx-3" target="_blank"
-                    rel="noreferrer">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#22252D">
-                        <path
-                            d="M23.602 2.034a1.8 1.8 0 0 0-.944.068S1.63 9.659.43 10.496c-.259.18-.346.284-.389.408-.208.595.439.858.439.858l5.42 1.766a.6.6 0 0 0 .274-.017l13.05-8.07c.101-.031.176 0 .16.075-.264.905-9.911 9.478-9.964 9.53a.2.2 0 0 0-.059.079c-.013.031-.018.064-.016.098l-.504 5.288s-.211 1.65 1.435 0c1.168-1.169 2.288-2.137 2.85-2.607 1.864 1.286 3.869 2.709 4.734 3.45a1.5 1.5 0 0 0 1.098.424c.825-.031 1.05-.934 1.05-.934s3.831-15.416 3.96-17.483c.012-.203.029-.332.031-.471.007-.161-.009-.322-.047-.478-.04-.179-.173-.324-.35-.378z">
-                        </path>
-                    </svg>
-                </a>
-                <a href="https://facebook.com/tornobet" class="d-flex justify-content-center mx-3" target="_blank"
-                    rel="noreferrer">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="#22252D">
-                        <path
-                            d="M9.347 23.25V13.5H6V9h3.347V5.857c0-3.423 2.167-5.107 5.221-5.107 1.463 0 2.72.109 3.086.158v3.577l-2.118.001c-1.661 0-2.036.789-2.036 1.947V9H18l-1.5 4.5h-3v9.75H9.347z">
-                        </path>
-                    </svg>
-                </a>
+                </button>
+                <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuClickableInside">
+                    <div class="small mb-1">Connected with:</div>
+                    <div class="fw-bolder wallet-code js-wallet-code"></div>
+
+                    <div class="d-grid gap-2 my-4 d-none">
+                        <button class="btn btn-outline-primary">Disconnect wallet</button>
+                    </div>
+                    <hr>
+                    <div class="pt-1 pb-2">
+                        <div class="alert alert-warning alert-dismissible fade show d-none" role="alert"
+                             id="js-error-withdraw-wrapper">
+                            <div id="js-error-text">Enter amount less than balance!</div>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                    aria-label="Close"></button>
+                        </div>
+                        <div class="fs-6 mb-2">BNB Amounts:</div>
+                        <div class="quantity d-flex justify-content-between align-items-center">
+                                <span
+                                        class="quantity-btn d-flex justify-content-center align-items-center qty-decrease">
+                                    <svg width="16" height="16" viewBox="0 0 12 2" fill="#CE234E"
+                                         xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                                d="M1 2C0.447715 2 0 1.55228 0 1C0 0.447715 0.447715 0 1 0H11C11.5523 0 12 0.447715 12 1C12 1.55228 11.5523 2 11 2H1Z">
+                                        </path>
+                                    </svg>
+                                </span>
+
+                            <input type="number" class="count text-center" name="qty" value="0.01" step="0.01">
+
+                            <span
+                                    class="quantity-btn d-flex justify-content-center align-items-center qty-increase">
+                                    <svg width="16" height="16" viewBox="0 0 12 12" fill="#CE234E">
+                                        <path
+                                                d="M7 5H11C11.5523 5 12 5.44772 12 6C12 6.55228 11.5523 7 11 7H7V11C7 11.5523 6.55228 12 6 12C5.44772 12 5 11.5523 5 11V7H1C0.447715 7 0 6.55228 0 6C0 5.44772 0.447715 5 1 5H5V1C5 0.447715 5.44772 0 6 0C6.55228 0 7 0.447715 7 1V5Z">
+                                        </path>
+                                    </svg>
+                                </span>
+                        </div>
+                        <div class="d-flex justify-content-between mt-2">
+                            <button type="button" class="col-6 btn btn-primary" style="width: 48%;"
+                                    id="js-deposit">Deposit
+                            </button>
+                            <button type="button" class="col-6 btn btn-outline-primary" style="width: 48%"
+                                    id="js-withdraw">Withdraw
+                            </button>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div class="d-flex align-items-center">
+                            <img src="/images/bnb.svg" alt="" width="40px" height="40px">
+                            <div class="mx-2">Balance:</div>
+                        </div>
+                        <div class="fw-bolder text-end js-balance">0 BNB</div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <div class="hero-title row d-flex align-items-center">
+        <div class="col-lg-5">
+            <h1><span class="highlight yellow">Predict</span> 2022 FIFA World Cup and <span
+                    class="highlight yellow">win BNB!</span></h1>
+        </div>
+        <div class="col-lg-7">
+            <img src="images/hero.jpg" class="img-fluid" alt="">
+        </div>
+    </div>
+
+    <div class="row steps-wrapper text-center">
+        <div class="col-md-4 steps-item justify-content-center">
+            <img class="steps-item-img" src="images/1.png" alt="">
+            <div class="steps-item-number d-flex justify-content-center">
+                1
+            </div>
+            <div class="h4">Choose the game you want to predict</div>
+        </div>
+        <div class="col-md-4 steps-item sm-my-4 justify-content-center">
+            <img class="steps-item-img" src="images/2.png" alt="">
+            <div class="steps-item-number obn d-flex justify-content-center">
+                2
+            </div>
+            <div class="h4">Determine amount of BNB and predict the result</div>
+        </div>
+        <div class="col-md-4 steps-item justify-content-center">
+            <img class="steps-item-img" src="images/3.png" alt="">
+            <div class="steps-item-number d-flex justify-content-center">
+                3
+            </div>
+            <div class="h4">Withdraw the amount you won after winning</div>
+        </div>
+    </div>
+
+    <div class="row d-none" id="js-dashboard-wrapper">
+        <div class="col">
+            <h2>Dashboard</h2>
+            <div class="box placeholder" id="js-dashboard-box">
+                <div class="text-center d-none" id="js-empty-dashboard">
+                    <img src="/images/4.png" alt="">
+                    <div class="h4 my-4" style="color: #aaa;">You haven't placed any bets yet!</div>
+                    <a href="#predictions" class="btn btn-primary btn-lg">Place First Bet</a>
+                </div>
+                <div class="mb-3 d-none" id="js-my-predictions-title">
+                    <p>
+                        The matches you bet on, are displayed in this section. After determining the result of each match, you can release your amount.
+                    </p>
+                </div>
+                <!-- <div class="d-flex row-border no-border text-primary fs-3 fw-bold pb-0">
+                <div class="flex-fill">Balance</div>
+                <div class="flex-fill text-end js-balance">0 BNB</div>
+            </div> -->
             </div>
         </div>
     </div>
+
+    <div class="row" id="predictions">
+        <h2>Active Predictions</h2>
+    </div>
+
+    <div class="row faq">
+        <div class="col accordion" id="accordionExample">
+            <h2>FAQ</h2>
+            <div class="item accordion-item">
+                <div class="d-flex justify-content-between accordion-header" id="heading1">
+                    <div class="h4 accordion-button collapsed" id="panelsStayOpen-headingOne"
+                         data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false"
+                         aria-controls="collapse1">
+                        How can I trust your site?
+                    </div>
+                </div>
+                <div id="collapse1" class="accordion-collapse collapse" aria-labelledby="heading1"
+                     data-bs-parent="#accordionExample">
+                    <p class="accordion-body">
+                        Tornobet is built on blockchain technology and all your activities are done with a smart contract. And there is no other intermediary between you and other bettors. So you can make your bet safely and be sure of the security of your capital and receiving your prize.
+                    </p>
+                </div>
+            </div>
+            <div class="item accordion-item">
+                <div class="d-flex justify-content-between accordion-header" id="heading2">
+                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse2"
+                         aria-expanded="false" aria-controls="collapse2">
+                        Do I need to be registered?
+                    </div>
+                </div>
+                <div id="collapse2" class="accordion-collapse collapse" aria-labelledby="heading2"
+                     data-bs-parent="#accordionExample">
+                    <p class="accordion-body">
+                        We have no need for your private information. Only the address of your digital currency wallet is provided to the smart contract and is not stored elsewhere and is not even shared with others..
+                    </p>
+                </div>
+            </div>
+            <div class="item accordion-item">
+                <div class="d-flex justify-content-between accordion-header" id="heading3">
+                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse3"
+                         aria-expanded="false" aria-controls="collapse3">
+                        How do I place a bet?
+                    </div>
+                </div>
+                <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3"
+                     data-bs-parent="#accordionExample">
+                    <p class="accordion-body">
+                        To place a bet, you must first sign in with your crypto wallet (Metamask) and then follow the steps below:
+
+                        Browse the "Active Predictions" at the top of the home page.
+                        Enter the amount you want to bet on your chosen option.
+                        Tap the "Place Bet" button to submit a bet.
+                        Confirmation alert will be displayed after successful processing.                    
+                    </p>
+                </div>
+            </div>
+            <div class="item accordion-item">
+                <div class="d-flex justify-content-between accordion-header" id="heading4">
+                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse4"
+                         aria-expanded="false" aria-controls="collapse4">
+                        What is the minimum/maximum size of the bet?
+                    </div>
+                </div>
+                <div id="collapse4" class="accordion-collapse collapse" aria-labelledby="heading4"
+                     data-bs-parent="#accordionExample">
+                    <p class="accordion-body">
+                        There is no limit to the maximum bet amount. But the minimum bet amount is 0.01 BNB.
+                    </p>
+                </div>
+            </div>
+            <div class="item accordion-item">
+                <div class="d-flex justify-content-between accordion-header" id="heading5">
+                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse5"
+                         aria-expanded="false" aria-controls="collapse5">
+                        What are the maximum winnings?
+                    </div>
+                </div>
+                <div id="collapse5" class="accordion-collapse collapse" aria-labelledby="heading5"
+                     data-bs-parent="#accordionExample">
+                    <p class="accordion-body">
+                        There is no limit to the amount of winnings.
+                    </p>
+                </div>
+            </div>
+            <div class="item accordion-item">
+                <div class="d-flex justify-content-between accordion-header" id="heading6">
+                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse6"
+                         aria-expanded="false" aria-controls="collapse6">
+                        I have placed a bet by mistake. Can I ask for my bet to be cancelled?
+                    </div>
+                </div>
+                <div id="collapse6" class="accordion-collapse collapse" aria-labelledby="heading6"
+                     data-bs-parent="#accordionExample">
+                    <p class="accordion-body">
+                        Only if a sports match is cancelled, all bets are canceled and you can release your money.
+                        In addition, if someone on the opposite side does not make any bet with you, the bet is canceled and all the money can be released.
+                    </p>
+                </div>
+            </div>
+            <div class="item accordion-item">
+                <div class="d-flex justify-content-between accordion-header" id="heading7">
+                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse7"
+                         aria-expanded="false" aria-controls="collapse7">
+                        How can I view my bets?
+                    </div>
+                </div>
+                <div id="collapse7" class="accordion-collapse collapse" aria-labelledby="heading7"
+                     data-bs-parent="#accordionExample">
+                    <p class="accordion-body">
+                        You can access the list of your bets through the "Dashboard" at the top of the home page.
+                        You may increase the amount of bets or release your amounts if necessary.
+                    </p>
+                </div>
+            </div>
+            <div class="item accordion-item">
+                <div class="d-flex justify-content-between accordion-header" id="heading8">
+                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse8"
+                         aria-expanded="false" aria-controls="collapse8">
+                        How to use "Cash Out"?
+                    </div>
+                </div>
+                <div id="collapse8" class="accordion-collapse collapse" aria-labelledby="heading8"
+                     data-bs-parent="#accordionExample">
+                    <p class="accordion-body">
+                        To withdraw your money, just enter the amount you want to withdraw from the user menu and click on the withdrawal button.
+                    </p>
+                </div>
+            </div>
+            <div class="item accordion-item">
+                <div class="d-flex justify-content-between accordion-header" id="heading9">
+                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse9"
+                         aria-expanded="false" aria-controls="collapse9">
+                        How do I know that I have won a placed bet?
+                    </div>
+                </div>
+                <div id="collapse9" class="accordion-collapse collapse" aria-labelledby="heading9"
+                     data-bs-parent="#accordionExample">
+                    <p class="accordion-body">
+                        All betting results can be seen on the "Dashboard". 
+                        If it says "You won" in front of a record, you can release your amount plus the prize at the same time to your balance.
+                    </p>
+                </div>
+            </div>
+            <div class="item accordion-item">
+                <div class="d-flex justify-content-between accordion-header" id="heading10">
+                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse10"
+                         aria-expanded="false" aria-controls="collapse10">
+                        How can I report my problems and questions to the site?
+                    </div>
+                </div>
+                <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="heading10"
+                     data-bs-parent="#accordionExample">
+                    <p class="accordion-body">
+                        You can connect with us through social networks and messengers listed at the bottom of the home page.
+                        You may also get answers to your questions and problems through our online support via "Crisp", if available.
+                    </p>
+                </div>
+            </div>
+            <div class="item accordion-item">
+                <div class="d-flex justify-content-between accordion-header" id="heading11">
+                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse11"
+                         aria-expanded="false" aria-controls="collapse11">
+                        How about the 30 minutes of wasted time calculating the result for the predictions?
+                    </div>
+                </div>
+                <div id="collapse11" class="accordion-collapse collapse" aria-labelledby="heading11"
+                     data-bs-parent="#accordionExample">
+                    <p class="accordion-body">
+                        No. The result of the match for football predictions is calculated up to the 90th minute along with a few minutes of wasted time. 
+                        30 minutes overtime is not counted.
+                    </p>
+                </div>
+            </div>
+            <div class="item accordion-item">
+                <div class="d-flex justify-content-between accordion-header" id="heading12">
+                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse12"
+                         aria-expanded="false" aria-controls="collapse12">
+                         How is the prize calculated?
+                    </div>
+                </div>
+                <div id="collapse12" class="accordion-collapse collapse" aria-labelledby="heading12"
+                     data-bs-parent="#accordionExample">
+                    <p class="accordion-body">
+                        If you predict a match correctly, All the amounts that the parties have bet, minus the percentage of the website's profit, will be awarded based on your share in the bet.
+                    </p>
+                </div>
+            </div>
+            <!--<div class="item">
+                <div class="d-flex justify-content-between">
+                    <div class="h4">Is the smart contract verified?</div>
+                    <div class="plus text-center">
+                        <svg width="32" height="32" viewBox="0 0 24 24" fill="#FFF">
+                            <path d="M12 6a1 1 0 0 0-1 1v4H7a1 1 0 1 0 0 2h4v4a1 1 0 1 0 2 0v-4h4a1 1 0 1 0 0-2h-4V7a1 1 0 0 0-1-1Z"></path>
+                        </svg>
+                    </div>
+                </div>
+            </div>-->
+        </div>
+    </div>
+
+    <div class="footer">
+        <div class="d-flex justify-content-center">
+            <a href="https://twitter.com/tornobet" class="d-flex justify-content-center mx-2" target="_blank"
+               rel="noreferrer">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#22252D">
+                    <path
+                            d="M24.075 4.325c-.9.375-1.8.675-2.85.75 1.05-.6 1.8-1.575 2.175-2.7-.975.6-2.025.975-3.15 1.2C19.35 2.6 18.075 2 16.725 2c-2.7 0-4.95 2.175-4.95 4.95 0 .375.075.75.15 1.125C7.8 7.85 4.2 5.9 1.725 2.9a4.72 4.72 0 0 0-.675 2.475c0 1.725.9 3.225 2.175 4.125-.825 0-1.575-.225-2.25-.6v.075c0 2.4 1.725 4.35 3.975 4.8-.45.075-.825.15-1.275.15-.3 0-.6 0-.9-.075.6 1.95 2.475 3.375 4.575 3.45-1.65 1.35-3.825 2.1-6.15 2.1-.375 0-.825 0-1.2-.075 2.25 1.35 4.875 2.175 7.65 2.175 9.075 0 14.025-7.5 14.025-14.025v-.6c.9-.75 1.725-1.575 2.4-2.55z">
+                    </path>
+                </svg>
+            </a>
+            <a href="https://instagram.com/tornobet" class="d-flex justify-content-center mx-2" target="_blank"
+               rel="noreferrer">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#22252D">
+                    <path
+                            d="M12 15.8a3.8 3.8 0 1 0 0-7.6 3.8 3.8 0 0 0-3.291 5.7A3.8 3.8 0 0 0 12 15.8h0zM16.749.6h-9.5A6.66 6.66 0 0 0 .6 7.251v9.5A6.66 6.66 0 0 0 7.251 23.4h9.5a6.66 6.66 0 0 0 6.649-6.651v-9.5A6.66 6.66 0 0 0 16.749.6zM12 17.7A5.71 5.71 0 0 1 6.3 12 5.71 5.71 0 0 1 12 6.3a5.71 5.71 0 0 1 5.7 5.7 5.71 5.71 0 0 1-5.7 5.7zm6.65-11.4a.95.95 0 0 1 0-1.9.95.95 0 1 1 0 1.9z">
+                    </path>
+                </svg>
+            </a>
+            <a href="https://t.me/tornobet" class="d-flex justify-content-center mx-2" target="_blank"
+               rel="noreferrer">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#22252D">
+                    <path
+                            d="M23.602 2.034a1.8 1.8 0 0 0-.944.068S1.63 9.659.43 10.496c-.259.18-.346.284-.389.408-.208.595.439.858.439.858l5.42 1.766a.6.6 0 0 0 .274-.017l13.05-8.07c.101-.031.176 0 .16.075-.264.905-9.911 9.478-9.964 9.53a.2.2 0 0 0-.059.079c-.013.031-.018.064-.016.098l-.504 5.288s-.211 1.65 1.435 0c1.168-1.169 2.288-2.137 2.85-2.607 1.864 1.286 3.869 2.709 4.734 3.45a1.5 1.5 0 0 0 1.098.424c.825-.031 1.05-.934 1.05-.934s3.831-15.416 3.96-17.483c.012-.203.029-.332.031-.471.007-.161-.009-.322-.047-.478-.04-.179-.173-.324-.35-.378z">
+                    </path>
+                </svg>
+            </a>
+            <a href="https://facebook.com/tornobet" class="d-flex justify-content-center mx-2" target="_blank"
+               rel="noreferrer">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="#22252D">
+                    <path
+                            d="M9.347 23.25V13.5H6V9h3.347V5.857c0-3.423 2.167-5.107 5.221-5.107 1.463 0 2.72.109 3.086.158v3.577l-2.118.001c-1.661 0-2.036.789-2.036 1.947V9H18l-1.5 4.5h-3v9.75H9.347z">
+                    </path>
+                </svg>
+            </a>
+        </div>
+    </div>
+</div>
 </body>
 
 </html>

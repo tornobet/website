@@ -1,7 +1,7 @@
 # Tornobet.com
 
-A bet website on blockchain.
+Predict 2022 FIFA World Cup and win BNB!
 
 ## Getting started
 
-the website is comming soon.
+Go to the tornobet.com and place a bet!

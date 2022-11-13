@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Predict | Tornobet</title>
+    <link rel="icon" type="image/svg+xml" href="./images/favicon.svg">
+    <link rel="icon" type="image/png" href="./images/favicon.png">
+    <link rel="StyleSheet" href="scss/style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
+    <script src="./node_modules/web3/dist/web3.min.js"></script>
+    <script src="./tokenPriceApi.js"></script>
+    <script src="./global.js"></script>
+    <script src="./prediction.js"></script>
+</head>
+
+<body>
+    <div class="alert alert-fixed alert-danger position-fixed d-none" id="js-top-fixed-error" role="alert"></div>
+
+    <div class="modal fade" id="theModal" tabindex="-1" aria-labelledby="theModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                        id="js-modal-close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img src="/images/bsc.svg" alt="" width="120px" height="120px" id="js-modal-image">
+                    <svg width="120px" height="120px" viewBox="0 0 97 86" id="js-modal-icon">
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M97 43C97 66.748 77.748 86 54 86C43 86 43 86 43 86V0H54C77.748 0 97 19.252 97 43Z"
+                            fill="#AAABAE"></path>
+                        <path d="M95.8311 53C91.3235 71.9254 74.3052 86 54 86H43V53H95.8311Z" fill="#797C81"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M86 43C86 66.748 66.748 86 43 86C19.252 86 0 66.748 0 43C0 19.252 19.252 0 43 0C66.748 0 86 19.252 86 43Z"
+                            fill="#D9DADC"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M75 43C75 60.673 60.673 75 43 75C25.327 75 11 60.673 11 43C11 25.327 25.327 11 43 11C60.673 11 75 25.327 75 43Z"
+                            fill="white"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M25.799 10.207C26.2132 10.9245 25.9674 11.8419 25.25 12.2561C19.8533 15.3719 15.3719 19.8533 12.2561 25.25C11.8419 25.9674 10.9245 26.2132 10.207 25.799C9.48961 25.3848 9.2438 24.4674 9.65801 23.75C13.0371 17.8972 17.8973 13.0371 23.75 9.658C24.4674 9.24379 25.3848 9.4896 25.799 10.207Z"
+                            fill="white"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M9.3088 27.6327C10.0758 27.9457 10.4439 28.8212 10.1309 29.5882L10.0782 29.7181C9.76828 30.4864 8.89422 30.8579 8.12596 30.548C7.3577 30.238 6.98616 29.364 7.2961 28.5957C7.31507 28.5487 7.33413 28.5017 7.35327 28.4548C7.66625 27.6878 8.54177 27.3197 9.3088 27.6327Z"
+                            fill="white"></path>
+                        <path
+                            d="M58.7782 46L59.8891 47.1109C61.4621 48.6839 61.9326 51.0495 61.0813 53.1048C60.23 55.16 58.2245 56.5 56 56.5H49C47.1694 56.5 45.5478 55.6057 44.548 54.2302L43.8891 54.8891C42.8576 55.9205 41.4587 56.5 40 56.5H33L44.548 46H58.7782Z"
+                            fill="#797C81"></path>
+                        <path
+                            d="M33 29.5H40C41.4587 29.5 42.8576 30.0795 43.8891 31.1109L44.548 31.7698C45.5478 30.3943 47.1694 29.5 49 29.5H56C58.2245 29.5 60.23 30.84 61.0813 32.8952C61.9326 34.9504 61.4621 37.3161 59.8891 38.8891L55.7782 43L58.7782 46H49.5L33 29.5Z"
+                            fill="#AAABAE"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd"
+                            d="M29.1109 31.1109C31.2588 28.963 34.7412 28.963 36.8891 31.1109L41 35.2218L45.1109 31.1109C47.2588 28.963 50.7412 28.963 52.8891 31.1109C55.037 33.2588 55.037 36.7412 52.8891 38.8891L48.7782 43L52.8891 47.1109C55.037 49.2588 55.037 52.7412 52.8891 54.8891C50.7412 57.037 47.2588 57.037 45.1109 54.8891L41 50.7782L36.8891 54.8891C34.7412 57.037 31.2588 57.037 29.1109 54.8891C26.963 52.7412 26.963 49.2588 29.1109 47.1109L33.2218 43L29.1109 38.8891C26.963 36.7412 26.963 33.2588 29.1109 31.1109Z"
+                            fill="#D9DADC"></path>
+                    </svg>
+                    <div class="fs-5 mt-4" id="js-modal-text"></div>
+                    <a href="#" target="_blank" class="btn btn-primary my-4" id="js-modal-link"></a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="match-subheader-content text-center">
+        <div class="container prediction-info">
+            <div class="header">
+                <nav class="navbar">
+                    <a class="navbar-brand" href="/">
+                        <img src="images/logo.svg" alt="" width="180">
+                    </a>
+                    <div class="toast align-items-center text-white bg-primary border-0" id="theToast" role="alert"
+                        aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body" id="js-toast-text"></div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"></button>
+                        </div>
+                    </div>
+                    <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#theModal">
+                Launch demo modal
+            </button> -->
+
+                    <div class="modal fade" id="theModal" tabindex="-1" aria-labelledby="theModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog modal-sm modal-dialog-centered">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                                        id="js-modal-close"></button>
+                                </div>
+                                <div class="modal-body text-center">
+                                    <img src="/images/bsc.svg" alt="" width="120px" height="120px" id="js-modal-image">
+                                    <svg width="120px" height="120px" viewBox="0 0 97 86" id="js-modal-icon">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M97 43C97 66.748 77.748 86 54 86C43 86 43 86 43 86V0H54C77.748 0 97 19.252 97 43Z" fill="#AAABAE"></path>
+                                        <path d="M95.8311 53C91.3235 71.9254 74.3052 86 54 86H43V53H95.8311Z" fill="#797C81"></path>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M86 43C86 66.748 66.748 86 43 86C19.252 86 0 66.748 0 43C0 19.252 19.252 0 43 0C66.748 0 86 19.252 86 43Z" fill="#D9DADC"></path>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M75 43C75 60.673 60.673 75 43 75C25.327 75 11 60.673 11 43C11 25.327 25.327 11 43 11C60.673 11 75 25.327 75 43Z" fill="white"></path>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M25.799 10.207C26.2132 10.9245 25.9674 11.8419 25.25 12.2561C19.8533 15.3719 15.3719 19.8533 12.2561 25.25C11.8419 25.9674 10.9245 26.2132 10.207 25.799C9.48961 25.3848 9.2438 24.4674 9.65801 23.75C13.0371 17.8972 17.8973 13.0371 23.75 9.658C24.4674 9.24379 25.3848 9.4896 25.799 10.207Z" fill="white"></path>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M9.3088 27.6327C10.0758 27.9457 10.4439 28.8212 10.1309 29.5882L10.0782 29.7181C9.76828 30.4864 8.89422 30.8579 8.12596 30.548C7.3577 30.238 6.98616 29.364 7.2961 28.5957C7.31507 28.5487 7.33413 28.5017 7.35327 28.4548C7.66625 27.6878 8.54177 27.3197 9.3088 27.6327Z" fill="white"></path>
+                                        <path d="M58.7782 46L59.8891 47.1109C61.4621 48.6839 61.9326 51.0495 61.0813 53.1048C60.23 55.16 58.2245 56.5 56 56.5H49C47.1694 56.5 45.5478 55.6057 44.548 54.2302L43.8891 54.8891C42.8576 55.9205 41.4587 56.5 40 56.5H33L44.548 46H58.7782Z" fill="#797C81"></path>
+                                        <path d="M33 29.5H40C41.4587 29.5 42.8576 30.0795 43.8891 31.1109L44.548 31.7698C45.5478 30.3943 47.1694 29.5 49 29.5H56C58.2245 29.5 60.23 30.84 61.0813 32.8952C61.9326 34.9504 61.4621 37.3161 59.8891 38.8891L55.7782 43L58.7782 46H49.5L33 29.5Z" fill="#AAABAE"></path>
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M29.1109 31.1109C31.2588 28.963 34.7412 28.963 36.8891 31.1109L41 35.2218L45.1109 31.1109C47.2588 28.963 50.7412 28.963 52.8891 31.1109C55.037 33.2588 55.037 36.7412 52.8891 38.8891L48.7782 43L52.8891 47.1109C55.037 49.2588 55.037 52.7412 52.8891 54.8891C50.7412 57.037 47.2588 57.037 45.1109 54.8891L41 50.7782L36.8891 54.8891C34.7412 57.037 31.2588 57.037 29.1109 54.8891C26.963 52.7412 26.963 49.2588 29.1109 47.1109L33.2218 43L29.1109 38.8891C26.963 36.7412 26.963 33.2588 29.1109 31.1109Z" fill="#D9DADC"></path>
+                                    </svg>
+                                    <div class="fs-5 my-4" id="js-modal-text"></div>
+                                    <a href="#" target="_blank" class="btn btn-primary mb-4" id="js-modal-link"></a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="wallet btn btn-outline-secondary d-flex align-items-center placeholder"
+                        id="js-not-signed">
+                        <img class="wallet-avatar" src="images/fox.svg" alt="">
+                        <div>Connect</div>
+                    </div>
+                    <div class="wallet btn-group d-none" id="js-signed">
+                        <button type="button"
+                            class="btn-nav-transparent d-flex justify-content-between align-items-center dropdown-toggle"
+                            data-bs-toggle="dropdown" id="dropdownMenuClickableInside" data-bs-auto-close="outside"
+                            aria-expanded="false">
+                            <svg width="24" height="24" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg"
+                                aria-hidden="true" role="presentation" focusable="false"
+                                style="stroke: #F0ECE9; stroke-width: 3; margin-right: 8px">
+                                <g fill="none" fill-rule="nonzero">
+                                    <path d="m2 16h28"></path>
+                                    <path d="m2 24h28"></path>
+                                    <path d="m2 8h28"></path>
+                                </g>
+                            </svg>
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="#F0ECE9"
+                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation"
+                                focusable="false">
+                                <path
+                                    d="m16 .7c-8.437 0-15.3 6.863-15.3 15.3s6.863 15.3 15.3 15.3 15.3-6.863 15.3-15.3-6.863-15.3-15.3-15.3zm0 28c-4.021 0-7.605-1.884-9.933-4.81a12.425 12.425 0 0 1 6.451-4.4 6.507 6.507 0 0 1 -3.018-5.49c0-3.584 2.916-6.5 6.5-6.5s6.5 2.916 6.5 6.5a6.513 6.513 0 0 1 -3.019 5.491 12.42 12.42 0 0 1 6.452 4.4c-2.328 2.925-5.912 4.809-9.933 4.809z">
+                                </path>
+                            </svg>
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuClickableInside">
+                            <div class="small mb-1">Connected with:</div>
+                            <div class="fw-bolder wallet-code js-wallet-code"></div>
+
+                            <div class="d-grid gap-2 my-4 d-none">
+                                <button class="btn btn-outline-primary">Disconnect wallet</button>
+                            </div>
+                            <hr>
+                            <div class="pt-1 pb-2">
+                                <div class="alert alert-warning alert-dismissible fade show d-none" role="alert"
+                                    id="js-error-withdraw-wrapper">
+                                    <div id="js-error-withdraw-text">Enter amount less than balance!</div>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="fs-6 mb-2">BNB Amounts:</div>
+                                <div class="quantity d-flex justify-content-between align-items-center">
+                                    <span
+                                        class="quantity-btn d-flex justify-content-center align-items-center qty-decrease">
+                                        <svg width="16" height="16" viewBox="0 0 12 2" fill="#CE234E"
+                                            xmlns="http://www.w3.org/2000/svg">
+                                            <path
+                                                d="M1 2C0.447715 2 0 1.55228 0 1C0 0.447715 0.447715 0 1 0H11C11.5523 0 12 0.447715 12 1C12 1.55228 11.5523 2 11 2H1Z">
+                                            </path>
+                                        </svg>
+                                    </span>
+
+                                    <input type="number" class="count text-center" name="qty" value="0.01" step="0.01">
+
+                                    <span
+                                        class="quantity-btn d-flex justify-content-center align-items-center qty-increase">
+                                        <svg width="16" height="16" viewBox="0 0 12 12" fill="#CE234E">
+                                            <path
+                                                d="M7 5H11C11.5523 5 12 5.44772 12 6C12 6.55228 11.5523 7 11 7H7V11C7 11.5523 6.55228 12 6 12C5.44772 12 5 11.5523 5 11V7H1C0.447715 7 0 6.55228 0 6C0 5.44772 0.447715 5 1 5H5V1C5 0.447715 5.44772 0 6 0C6.55228 0 7 0.447715 7 1V5Z">
+                                            </path>
+                                        </svg>
+                                    </span>
+                                </div>
+                                <div class="d-flex justify-content-between mt-2">
+                                    <button type="button" class="col-6 btn btn-primary" style="width: 48%;"
+                                        id="js-deposit">Deposit</button>
+                                    <button type="button" class="col-6 btn btn-outline-primary" style="width: 48%;"
+                                        id="js-withdraw">Withdraw
+                                    </button>
+                                </div>
+                            </div>
+                            <hr>
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="d-flex align-items-center">
+                                    <img src="/images/bnb.svg" alt="" width="40px" height="40px">
+                                    <div class="mx-2">Balance:</div>
+                                </div>
+                                <div class="fw-bolder text-end js-balance">0 BNB</div>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            </div>
+            <div class="row no-margin justify-content-center">
+                <div class="col-lg-6">
+                    <div class="small" id="js-group"></div>
+                    <div class="row no-margin">
+                        <div class="col-5" id="js-team1">
+                            <img src="" alt="team1 flag" class="flag mb-3 js-img">
+                            <div class="h5 js-name"></div>
+                        </div>
+                        <div class="col-2 fs-3 fw-bolder">
+                            <div class="vs d-flex justify-content-center" id="js-vs">VS</div>
+                        </div>
+                        <div class="col-5" id="js-team2">
+                            <img src="" alt="team2 flag" class="flag mb-3 js-img">
+                            <div class="h5 js-name"></div>
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-center countdown text-center d-none" id="js-countdown-wrapper">
+                        <div>
+                            <div class="countdown-value js-days"></div>
+                            <div class="countdown-unit">days</div>
+                        </div>
+                        <div>
+                            <div class="countdown-value js-hours"></div>
+                            <div class="countdown-unit">hours</div>
+                        </div>
+                        <div>
+                            <div class="countdown-value js-minutes"></div>
+                            <div class="countdown-unit">minutes</div>
+                        </div>
+                        <div>
+                            <div class="countdown-value js-seconds"></div>
+                            <div class="countdown-unit">seconds</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="match-container">
+        <div class="container">
+            <div class="row no-margin justify-content-center">
+                <div class="col-lg-6">
+                    <div class="toast align-items-center text-white bg-primary border-0" id="theToast" role="alert"
+                        aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body" id="js-toast-text"></div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                                aria-label="Close"></button>
+                        </div>
+                    </div>
+                    <div class="alert alert-warning alert-dismissible fade show d-none" role="alert"
+                        id="js-error-wrapper">
+                        <div id="js-error-text">Please select one item to bet!</div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    <div class="text-center d-none" id="js-predictioned-box">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="6.0625rem" height="5.375rem" fill="none" viewBox="0 0 97 86"  class="d-none" id="js-prediction-box-success-icon">
+                            <path fill="#58DB9E" fill-rule="evenodd" d="M97 43c0 23.748-19.252 43-43 43H43V0h11c23.748 0 43 19.252 43 43z" clip-rule="evenodd"></path>
+                            <path fill="#2FBD7B" d="M95.831 53C91.323 71.925 74.305 86 54 86H43V53h52.831z"></path>
+                            <path fill="#84F0BD" fill-rule="evenodd" d="M86 43c0 23.748-19.252 43-43 43S0 66.748 0 43 19.252 0 43 0s43 19.252 43 43z" clip-rule="evenodd"></path>
+                            <path fill="#fff" fill-rule="evenodd" d="M75 43c0 17.673-14.327 32-32 32-17.673 0-32-14.327-32-32 0-17.673 14.327-32 32-32 17.673 0 32 14.327 32 32z" clip-rule="evenodd"></path>
+                            <g fill="#fff" fill-rule="evenodd" clip-rule="evenodd" opacity="0.6">
+                                <path d="M25.8 10.207a1.5 1.5 0 01-.55 2.05A35.5 35.5 0 0012.256 25.25a1.5 1.5 0 01-2.598-1.5A38.5 38.5 0 0123.75 9.658a1.5 1.5 0 012.05.549zM9.309 27.633a1.5 1.5 0 01.822 1.955l-.053.13a1.5 1.5 0 01-2.782-1.122l.058-.141a1.5 1.5 0 011.955-.822z"></path>
+                            </g>
+                            <path fill="#58DB9E" d="M53 29.5h7a5.5 5.5 0 013.89 9.39l-16 16A5.5 5.5 0 0144 56.5h-7l16-16v-11z"></path>
+                            <path fill="#2FBD7B" d="M37 56.5h7a5.5 5.5 0 003.89-1.61L56.777 46H47.5L37 56.5z"></path>
+                            <path fill="#84F0BD" fill-rule="evenodd" d="M56.89 31.11a5.5 5.5 0 010 7.78l-16 16a5.5 5.5 0 01-7.78 0l-8-8a5.5 5.5 0 117.78-7.78L37 43.223 49.11 31.11a5.5 5.5 0 017.78 0z" clip-rule="evenodd"></path>
+                        </svg>
+                        <svg width="120px" height="120px" viewBox="0 0 97 86" class="d-none" id="js-prediction-box-error-icon">
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M97 43C97 66.748 77.748 86 54 86C43 86 43 86 43 86V0H54C77.748 0 97 19.252 97 43Z" fill="#AAABAE"></path>
+                            <path d="M95.8311 53C91.3235 71.9254 74.3052 86 54 86H43V53H95.8311Z" fill="#797C81"></path>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M86 43C86 66.748 66.748 86 43 86C19.252 86 0 66.748 0 43C0 19.252 19.252 0 43 0C66.748 0 86 19.252 86 43Z" fill="#D9DADC"></path>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M75 43C75 60.673 60.673 75 43 75C25.327 75 11 60.673 11 43C11 25.327 25.327 11 43 11C60.673 11 75 25.327 75 43Z" fill="white"></path>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M25.799 10.207C26.2132 10.9245 25.9674 11.8419 25.25 12.2561C19.8533 15.3719 15.3719 19.8533 12.2561 25.25C11.8419 25.9674 10.9245 26.2132 10.207 25.799C9.48961 25.3848 9.2438 24.4674 9.65801 23.75C13.0371 17.8972 17.8973 13.0371 23.75 9.658C24.4674 9.24379 25.3848 9.4896 25.799 10.207Z" fill="white"></path>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M9.3088 27.6327C10.0758 27.9457 10.4439 28.8212 10.1309 29.5882L10.0782 29.7181C9.76828 30.4864 8.89422 30.8579 8.12596 30.548C7.3577 30.238 6.98616 29.364 7.2961 28.5957C7.31507 28.5487 7.33413 28.5017 7.35327 28.4548C7.66625 27.6878 8.54177 27.3197 9.3088 27.6327Z" fill="white"></path>
+                            <path d="M58.7782 46L59.8891 47.1109C61.4621 48.6839 61.9326 51.0495 61.0813 53.1048C60.23 55.16 58.2245 56.5 56 56.5H49C47.1694 56.5 45.5478 55.6057 44.548 54.2302L43.8891 54.8891C42.8576 55.9205 41.4587 56.5 40 56.5H33L44.548 46H58.7782Z" fill="#797C81"></path>
+                            <path d="M33 29.5H40C41.4587 29.5 42.8576 30.0795 43.8891 31.1109L44.548 31.7698C45.5478 30.3943 47.1694 29.5 49 29.5H56C58.2245 29.5 60.23 30.84 61.0813 32.8952C61.9326 34.9504 61.4621 37.3161 59.8891 38.8891L55.7782 43L58.7782 46H49.5L33 29.5Z" fill="#AAABAE"></path>
+                            <path fill-rule="evenodd" clip-rule="evenodd" d="M29.1109 31.1109C31.2588 28.963 34.7412 28.963 36.8891 31.1109L41 35.2218L45.1109 31.1109C47.2588 28.963 50.7412 28.963 52.8891 31.1109C55.037 33.2588 55.037 36.7412 52.8891 38.8891L48.7782 43L52.8891 47.1109C55.037 49.2588 55.037 52.7412 52.8891 54.8891C50.7412 57.037 47.2588 57.037 45.1109 54.8891L41 50.7782L36.8891 54.8891C34.7412 57.037 31.2588 57.037 29.1109 54.8891C26.963 52.7412 26.963 49.2588 29.1109 47.1109L33.2218 43L29.1109 38.8891C26.963 36.7412 26.963 33.2588 29.1109 31.1109Z" fill="#D9DADC"></path>
+                        </svg>
+                        <div class="fs-4 fw-bolder text-success mt-3 mb-5"></div>
+                    </div>
+
+                    <div class="justify-content-between align-items-center d-none" id="js-bet-wrapper">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <label for="" class="fw-bolder" id="js-bet-question">How much BNB do you want to
+                                bet?</label>
+                            <div class="quantity d-flex justify-content-between align-items-md-center ml-1">
+                                <span
+                                    class="quantity-btn d-flex justify-content-center align-items-center qty-decrease">
+                                    <svg width="16" height="16" viewBox="0 0 12 2" fill="#CE234E"
+                                        xmlns="http://www.w3.org/2000/svg">
+                                        <path
+                                            d="M1 2C0.447715 2 0 1.55228 0 1C0 0.447715 0.447715 0 1 0H11C11.5523 0 12 0.447715 12 1C12 1.55228 11.5523 2 11 2H1Z">
+                                        </path>
+                                    </svg>
+                                </span>
+
+                                <input type="number" class="count text-center" name="prediction_amount" value="0.01"
+                                    step="0.01">
+
+                                <span
+                                    class="quantity-btn d-flex justify-content-center align-items-center qty-increase">
+                                    <svg width="16" height="16" viewBox="0 0 12 12" fill="#CE234E">
+                                        <path
+                                            d="M7 5H11C11.5523 5 12 5.44772 12 6C12 6.55228 11.5523 7 11 7H7V11C7 11.5523 6.55228 12 6 12C5.44772 12 5 11.5523 5 11V7H1C0.447715 7 0 6.55228 0 6C0 5.44772 0.447715 5 1 5H5V1C5 0.447715 5.44772 0 6 0C6.55228 0 7 0.447715 7 1V5Z">
+                                        </path>
+                                    </svg>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="mb-3 text-end">
+                            <span>Expected profit</span>
+                        </div>
+
+                        <div class="form-check">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <input class="form-check-input js-result-option" type="radio" name="result_option"
+                                        id="js-result-option-1" value="1" disabled>
+                                    <label class="form-check-label" for="js-result-option-1" id="js-1-win"></label>
+                                </div>
+                                <div id="js-1-profit">
+                                    <span>(~ 0 BNB)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-check">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <input class="form-check-input js-result-option" type="radio" name="result_option"
+                                        id="js-result-option-3" value="3" disabled>
+                                    <label class="form-check-label" for="js-result-option-3">
+                                        Draw
+                                    </label>
+                                </div>
+                                <div id="js-3-profit">
+                                    <span>(~ 0 BNB)</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-check">
+                            <div class="d-flex justify-content-between">
+                                <div>
+                                    <input class="form-check-input js-result-option" type="radio" name="result_option"
+                                        id="js-result-option-2" value="2" disabled>
+                                    <label class="form-check-label" for="js-result-option-2" id="js-2-win"></label>
+                                </div>
+                                <div id="js-2-profit">
+                                    <span>(~ 0 BNB)</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-grid mt-4">
+                            <button class="btn btn-lg btn-primary placeholder" id="js-set-prediction" type="button"
+                                disabled>Place a Bet
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="box mt-5 placeholder" id="js-other-predictions" style="background: white">
+                        <div class="h4 mb-4">Predictions</div>
+                        <div class="mt-2 d-flex justify-content-between">
+                            <svg width="14" height="18" viewBox="0 0 14 18" fill="#3A3D42">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M9.49992 10.666C11.8011 10.666 13.6666 12.5315 13.6666 14.8327V16.4993C13.6666 16.9596 13.2935 17.3327 12.8333 17.3327C12.373 17.3327 11.9999 16.9596 11.9999 16.4993V14.8327C11.9999 13.452 10.8806 12.3327 9.49992 12.3327H4.49992C3.11921 12.3327 1.99992 13.452 1.99992 14.8327V16.4993C1.99992 16.9596 1.62682 17.3327 1.16659 17.3327C0.706348 17.3327 0.333252 16.9596 0.333252 16.4993V14.8327C0.333252 12.5315 2.19873 10.666 4.49992 10.666H9.49992ZM6.99992 0.666016C9.3011 0.666016 11.1666 2.5315 11.1666 4.83268C11.1666 7.13387 9.3011 8.99935 6.99992 8.99935C4.69873 8.99935 2.83325 7.13387 2.83325 4.83268C2.83325 2.5315 4.69873 0.666016 6.99992 0.666016ZM6.99992 2.33268C5.61921 2.33268 4.49992 3.45197 4.49992 4.83268C4.49992 6.21339 5.61921 7.33268 6.99992 7.33268C8.38063 7.33268 9.49992 6.21339 9.49992 4.83268C9.49992 3.45197 8.38063 2.33268 6.99992 2.33268Z">
+                                </path>
+                            </svg>
+                            <div class="px-2" id="js-1-count" style="width: 40px;">0</div>
+                            <div id="js-team1-name"></div>
+                            <div class="line px-3 flex-fill"></div>
+                            <div id="js-1-amount">0 BNB</div>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-between">
+                            <svg width="14" height="18" viewBox="0 0 14 18" fill="#3A3D42">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M9.49992 10.666C11.8011 10.666 13.6666 12.5315 13.6666 14.8327V16.4993C13.6666 16.9596 13.2935 17.3327 12.8333 17.3327C12.373 17.3327 11.9999 16.9596 11.9999 16.4993V14.8327C11.9999 13.452 10.8806 12.3327 9.49992 12.3327H4.49992C3.11921 12.3327 1.99992 13.452 1.99992 14.8327V16.4993C1.99992 16.9596 1.62682 17.3327 1.16659 17.3327C0.706348 17.3327 0.333252 16.9596 0.333252 16.4993V14.8327C0.333252 12.5315 2.19873 10.666 4.49992 10.666H9.49992ZM6.99992 0.666016C9.3011 0.666016 11.1666 2.5315 11.1666 4.83268C11.1666 7.13387 9.3011 8.99935 6.99992 8.99935C4.69873 8.99935 2.83325 7.13387 2.83325 4.83268C2.83325 2.5315 4.69873 0.666016 6.99992 0.666016ZM6.99992 2.33268C5.61921 2.33268 4.49992 3.45197 4.49992 4.83268C4.49992 6.21339 5.61921 7.33268 6.99992 7.33268C8.38063 7.33268 9.49992 6.21339 9.49992 4.83268C9.49992 3.45197 8.38063 2.33268 6.99992 2.33268Z">
+                                </path>
+                            </svg>
+                            <div class="px-2" id="js-3-count" style="width: 40px;">0</div>
+                            <div>Draw</div>
+                            <div class="line px-3 flex-fill"></div>
+                            <div id="js-3-amount">0 BNB</div>
+                        </div>
+                        <div class="mt-2 d-flex justify-content-between">
+                            <svg width="14" height="18" viewBox="0 0 14 18" fill="#3A3D42">
+                                <path fill-rule="evenodd" clip-rule="evenodd"
+                                    d="M9.49992 10.666C11.8011 10.666 13.6666 12.5315 13.6666 14.8327V16.4993C13.6666 16.9596 13.2935 17.3327 12.8333 17.3327C12.373 17.3327 11.9999 16.9596 11.9999 16.4993V14.8327C11.9999 13.452 10.8806 12.3327 9.49992 12.3327H4.49992C3.11921 12.3327 1.99992 13.452 1.99992 14.8327V16.4993C1.99992 16.9596 1.62682 17.3327 1.16659 17.3327C0.706348 17.3327 0.333252 16.9596 0.333252 16.4993V14.8327C0.333252 12.5315 2.19873 10.666 4.49992 10.666H9.49992ZM6.99992 0.666016C9.3011 0.666016 11.1666 2.5315 11.1666 4.83268C11.1666 7.13387 9.3011 8.99935 6.99992 8.99935C4.69873 8.99935 2.83325 7.13387 2.83325 4.83268C2.83325 2.5315 4.69873 0.666016 6.99992 0.666016ZM6.99992 2.33268C5.61921 2.33268 4.49992 3.45197 4.49992 4.83268C4.49992 6.21339 5.61921 7.33268 6.99992 7.33268C8.38063 7.33268 9.49992 6.21339 9.49992 4.83268C9.49992 3.45197 8.38063 2.33268 6.99992 2.33268Z">
+                                </path>
+                            </svg>
+                            <div class="px-2" id="js-2-count" style="width: 40px;">0</div>
+                            <div id="js-team2-name"></div>
+                            <div class="line px-3 flex-fill"></div>
+                            <div id="js-2-amount">0 BNB</div>
+                        </div>
+                    </div>
+
+                    <div class="faq faq-page">
+                        <div class="col accordion" id="accordionExample">
+                            <h2>FAQ</h2>
+                            <div class="item accordion-item">
+                                <div class="d-flex justify-content-between accordion-header" id="heading1">
+                                    <div class="h4 accordion-button collapsed" id="panelsStayOpen-headingOne"
+                                        data-bs-toggle="collapse" data-bs-target="#collapse1" aria-expanded="false"
+                                        aria-controls="collapse1">
+                                        Do I lose my money?
+                                    </div>
+                                </div>
+                                <div id="collapse1" class="accordion-collapse collapse" aria-labelledby="heading1"
+                                    data-bs-parent="#accordionExample">
+                                    <p class="accordion-body">
+                                        Only if the result of the match does not match your prediction, you will lose the entire amount you bet.
+                                        But if even a match is canceled, you can release all your money.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="item accordion-item">
+                                <div class="d-flex justify-content-between accordion-header" id="heading3">
+                                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse3"
+                                         aria-expanded="false" aria-controls="collapse3">
+                                        How do I place a bet?
+                                    </div>
+                                </div>
+                                <div id="collapse3" class="accordion-collapse collapse" aria-labelledby="heading3"
+                                     data-bs-parent="#accordionExample">
+                                    <p class="accordion-body">
+                                        To place a bet, you must first sign in with your crypto wallet (Metamask) and then follow the steps below:
+                
+                                        Browse the "Active Predictions" at the top of the home page.
+                                        Enter the amount you want to bet on your chosen option.
+                                        Tap the "Place Bet" button to submit a bet.
+                                        Confirmation alert will be displayed after successful processing.                    
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="item accordion-item">
+                                <div class="d-flex justify-content-between accordion-header" id="heading6">
+                                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse6"
+                                         aria-expanded="false" aria-controls="collapse6">
+                                        I have placed a bet by mistake. Can I ask for my bet to be cancelled?
+                                    </div>
+                                </div>
+                                <div id="collapse6" class="accordion-collapse collapse" aria-labelledby="heading6"
+                                     data-bs-parent="#accordionExample">
+                                    <p class="accordion-body">
+                                        Only if a sports match is cancelled, all bets are canceled and you can release your money.
+                                        In addition, if someone on the opposite side does not make any bet with you, the bet is canceled and all the money can be released.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="item accordion-item">
+                                <div class="d-flex justify-content-between accordion-header" id="heading9">
+                                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse9"
+                                         aria-expanded="false" aria-controls="collapse9">
+                                        How do I know that I have won a placed bet?
+                                    </div>
+                                </div>
+                                <div id="collapse9" class="accordion-collapse collapse" aria-labelledby="heading9"
+                                     data-bs-parent="#accordionExample">
+                                    <p class="accordion-body">
+                                        All betting results can be seen on the "Dashboard". 
+                                        If it says "You won" in front of a record, you can release your amount plus the prize at the same time to your balance.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="item accordion-item">
+                                <div class="d-flex justify-content-between accordion-header" id="heading10">
+                                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse10"
+                                         aria-expanded="false" aria-controls="collapse10">
+                                        How can I report my problems and questions to the site?
+                                    </div>
+                                </div>
+                                <div id="collapse10" class="accordion-collapse collapse" aria-labelledby="heading10"
+                                     data-bs-parent="#accordionExample">
+                                    <p class="accordion-body">
+                                        You can connect with us through social networks and messengers listed at the bottom of the home page.
+                                        You may also get answers to your questions and problems through our online support via "Crisp", if available.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="item accordion-item">
+                                <div class="d-flex justify-content-between accordion-header" id="heading11">
+                                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse11"
+                                         aria-expanded="false" aria-controls="collapse11">
+                                        How about the 30 minutes of wasted time calculating the result for the predictions?
+                                    </div>
+                                </div>
+                                <div id="collapse11" class="accordion-collapse collapse" aria-labelledby="heading11"
+                                     data-bs-parent="#accordionExample">
+                                    <p class="accordion-body">
+                                        No. The result of the match for football predictions is calculated up to the 90th minute along with a few minutes of wasted time. 
+                                        30 minutes overtime is not counted.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="item accordion-item">
+                                <div class="d-flex justify-content-between accordion-header" id="heading12">
+                                    <div class="h4 accordion-button collapsed" data-bs-toggle="collapse" data-bs-target="#collapse12"
+                                         aria-expanded="false" aria-controls="collapse12">
+                                         How is the prize calculated?
+                                    </div>
+                                </div>
+                                <div id="collapse12" class="accordion-collapse collapse" aria-labelledby="heading12"
+                                     data-bs-parent="#accordionExample">
+                                    <p class="accordion-body">
+                                        If you predict a match correctly, All the amounts that the parties have bet, minus the percentage of the website's profit, will be awarded based on your share in the bet.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>
