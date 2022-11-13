@@ -91,20 +91,20 @@ $(document).ready(function () {
 
 async function getWeb3(success, failed) {
   // web3 provider with fallback for old version
-  if ('undefined' !== typeof ethereum) {
-    window.web3 = new Web3(ethereum)
+  if ('undefined' !== typeof window.ethereum) {
+    window.web3 = new Web3(window.ethereum)
     /*try {
       // Request account access if needed
-      const accounts = await ethereum.send('eth_requestAccounts');
-      // const accounts = await ethereum.request({ method: 'eth_accounts' });
+      const accounts = await window.ethereum.send('eth_requestAccounts');
+      // const accounts = await window.ethereum.request({ method: 'eth_accounts' });
       // Accounts now exposed, use them
-      ethereum.send('eth_sendTransaction', { from: accounts[0], ... })
+      window.ethereum.send('eth_sendTransaction', { from: accounts[0], ... })
     } catch (error) {
       // User denied account access
     }*/
 
     try {
-      const accounts = await ethereum.request({ method: 'eth_requestAccounts' })
+      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
       if (accounts.length == 0) {
         $('#js-modal-image').addClass('d-none')
         $('#js-modal-icon').removeClass('d-none')
@@ -119,11 +119,11 @@ async function getWeb3(success, failed) {
       account = accounts[0]
       console.log('account', account)
       // detect account change
-      ethereum.on('accountsChanged', function (accounts) {
+      window.ethereum.on('accountsChanged', function (accounts) {
         checkAccount(accounts)
       })
       // detect Network change
-      ethereum.on('chainChanged', (chainId) => {
+      window.ethereum.on('chainChanged', (chainId) => {
         checkNetwork(parseInt(chainId))
       })
       // console.log(_metamask.isEnabled)
@@ -158,9 +158,9 @@ async function getWeb3(success, failed) {
   }
 
   //contract instance
-  // contract = ethereum.request({method: 'eth_requestAccounts', params: [account] }, abi, contractAddress);
+  // contract = window.ethereum.request({method: 'eth_requestAccounts', params: [account] }, abi, contractAddress);
   contract = new window.web3.eth.Contract(abi, contractAddress)
-  // const accounts = await ethereum.request({ method: 'eth_accounts' });
+  // const accounts = await window.ethereum.request({ method: 'eth_accounts' });
 
   if ('function' === typeof success) {
     success()
@@ -352,7 +352,7 @@ async function depositValue(value, callback) {
         return error
       })
 
-    /*const transactionHash = await ethereum.request({
+    /*const transactionHash = await window.ethereum.request({
       method: 'eth_sendTransaction',
       params: [
         {
