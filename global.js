@@ -61,22 +61,17 @@ $(document).ready(function () {
     getWeb3('wallet-connect', window[$('#js-sign-in').attr('success')], window[$('#js-sign-in').attr('failed')])
   });
 
-  $(document).on('click', '#js-sign-in', function () {
-    getWeb3(null, window[$(this).attr('success')], window[$(this).attr('failed')])
-  })
-
   $(document).on('click', '#js-disconnect', function () {
     setCookie("connected_to", '', 1);
     $('#js-signed').addClass('d-none')
-    $('#js-sign-in').removeClass('d-none').removeClass('placeholder')
-    // getWeb3(null, window[$(this).attr('success')], window[$(this).attr('failed')])
+    $('#js-sign-in').removeClass('d-none')
   })
 
   $(document).on('click', '#js-modal-close, #theModal', function () {
     setTimeout(function () {
       if (!$('#theModal').hasClass('show')) {
         callModal({ status: 'hide' })
-        $('#js-sign-in').removeClass('placeholder')
+        $('#js-sign-in').html('<div>Connect Wallet</div>');
       }
     }, 2000)
   })
@@ -146,6 +141,7 @@ function getCookie(cname) {
 }
 
 async function getWeb3(wallet_name, success, failed) {
+  $('#js-sign-in').html('<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>');
   // let connected_to = localStorage.getItem("connected_to");
   let connected_to = getCookie("connected_to");
   console.log('connected_to', connected_to)
@@ -165,6 +161,7 @@ async function getWeb3(wallet_name, success, failed) {
 
       try {
         const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+        $('#js-sign-in').html('<div>Connect Wallet</div>');
         if (accounts.length == 0) {
           setCookie("connected_to", '', 1);
           callModal({
@@ -190,7 +187,7 @@ async function getWeb3(wallet_name, success, failed) {
       } catch (error) {
         console.log('error', error)
         setCookie("connected_to", '', 1);
-        $('#js-sign-in').removeClass('placeholder')
+        $('#js-sign-in').html('<div>Connect Wallet</div>');
         callModal({ status: 'hide' })
         if (failed) {
           failed('user rejected permission')
@@ -205,6 +202,7 @@ async function getWeb3(wallet_name, success, failed) {
       await provider.enable()
       window.web3 = new Web3(provider)
       var accounts = await window.web3.eth.getAccounts()
+      $('#js-sign-in').html('<div>Connect Wallet</div>');
       if (accounts.length == 0) {
         setCookie("connected_to", '', 1);
         callModal({
@@ -219,10 +217,16 @@ async function getWeb3(wallet_name, success, failed) {
       }
       account = accounts[0]
       console.log('account', account)
+      provider.on("accountsChanged", (accounts) => {
+        checkAccount(accounts)
+      });
+      provider.on("chainChanged", (chainId) => {
+        checkNetwork(parseInt(chainId))
+      });
     } catch (error) {
       console.log('error', error)
       setCookie("connected_to", '', 1);
-      $('#js-sign-in').removeClass('placeholder')
+      $('#js-sign-in').html('<div>Connect Wallet</div>');
       callModal({ status: 'hide' })
       if (failed) {
         failed('user rejected permission')
@@ -231,7 +235,6 @@ async function getWeb3(wallet_name, success, failed) {
       return false
     }
   } else {
-    $('#js-sign-in').addClass('placeholder')
     callModal({
       login: 'all',
       title: 'Connect Wallet',
@@ -250,7 +253,7 @@ async function getWeb3(wallet_name, success, failed) {
 
   if (window.web3) {
     console.log('web3 connected.')
-    $('#js-sign-in').removeClass('placeholder')
+    $('#js-sign-in').html('<div>Connect Wallet</div>');
     callModal({ status: 'hide' })
     if (!(await checkNetwork())) {
       return true
@@ -265,7 +268,6 @@ async function getWeb3(wallet_name, success, failed) {
       success()
     }
   } else {
-    $('#js-sign-in').addClass('placeholder')
     callModal({
       login: 'wallet-connect',
       title: 'Connect Wallet',
@@ -428,7 +430,7 @@ function getAccount() {
   tmp = tmp.replace(tmp.substring(9, account.length - 4), ' ... ')
   $('.js-wallet-code').html(tmp)
   $('.js-wallet-code').attr('title', account)
-  $('#js-sign-in').addClass('d-none').removeClass('placeholder')
+  $('#js-sign-in').addClass('d-none')
   $('#js-signed').removeClass('d-none')
   window.web3.eth.defaultAccount = account
 }
@@ -556,6 +558,7 @@ function callModal(config) {
   }
 
   if ('undefined' !== typeof config.login) {
+    $('#modal-body').removeClass('text-center');
     if (('metamask' === config.login || 'all' === config.login) && 'undefined' !== typeof window.ethereum) {
       $('#js-modal-link-metamask').removeClass('d-none').removeClass('text-center').addClass('text-start').html('<img src="images/metamask.svg" width="24px" class="mx-1" alt=""><span>Metamask</span>')
     } else {
@@ -567,6 +570,7 @@ function callModal(config) {
       $('#js-modal-link-wallet-connect').addClass('d-none').removeClass('text-center').addClass('text-start').text('')
     }
   } else {
+    $('#modal-body').addClass('text-center');
     $('#js-modal-link-metamask').addClass('d-none').removeClass('text-center').addClass('text-start').text('')
     $('#js-modal-link-wallet-connect').addClass('d-none').removeClass('text-center').addClass('text-start').text('')
   }

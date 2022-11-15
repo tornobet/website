@@ -29,9 +29,13 @@ $(document).ready(function () {
       $('#js-vs').text(prediction.result.team1 + ' : ' + prediction.result.team2)
     }
 
-    getWeb3(null,function () {
-      predictionSuccess(prediction)
-    }, predictionFaild)
+    $(document).on('click', '#js-sign-in', function () {
+      getWeb3(null, function () {
+        predictionSuccess(prediction)
+      }, predictionFaild)
+    })
+
+    $('#js-sign-in').click();
   })
 
   $(document).on('click', '#js-set-prediction', function () {
@@ -110,6 +114,7 @@ async function predictionSuccess(prediction) {
 async function predictionFaild() { }
 
 async function showResults(predictionsInfo, mode = 'show') {
+  $('.js-info-loading').addClass('d-none')
   let predictionInfo = predictionsInfo[0],
     predictionResult = predictionsInfo[1]
 

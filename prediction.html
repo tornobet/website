@@ -7,8 +7,8 @@
     <link rel="icon" type="image/svg+xml" href="./images/favicon.svg">
     <link rel="icon" type="image/png" href="./images/favicon.png">
     <link rel="StyleSheet" href="scss/style.css" />
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.8.1/web3.min.js"></script>
     <script type="text/javascript" src="https://unpkg.com/@walletconnect/web3-provider@1.2.1/dist/umd/index.min.js"></script> 
@@ -27,7 +27,7 @@
                     <h5 class="modal-title d-none" id="js-modal-title"></h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="js-modal-close"></button>
                 </div>
-                <div class="modal-body text-center">
+                <div class="modal-body">
                     <img src="/images/bsc.svg" alt="" width="120px" height="120px" id="js-modal-image">
                     <svg width="120px" height="120px" viewBox="0 0 97 86" id="js-modal-icon">
                         <path fill-rule="evenodd" clip-rule="evenodd" d="M97 43C97 66.748 77.748 86 54 86C43 86 43 86 43 86V0H54C77.748 0 97 19.252 97 43Z" fill="#AAABAE"></path>
@@ -73,8 +73,8 @@
                         </div>
                     </div>
 
-                    <div class="wallet btn btn-outline-secondary d-flex align-items-center" success="indexSuccess" failed="indexFailed" id="js-sign-in">
-                        <div>Connect Wallet</div>
+                    <div class="wallet btn btn-outline-secondary d-flex align-items-center" success="predictionSuccess" failed="predictionFailed" id="js-sign-in">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     </div>
                     <div class="wallet btn-group d-none" id="js-signed">
                         <button type="button"
@@ -90,12 +90,8 @@
                                     <path d="m2 8h28"></path>
                                 </g>
                             </svg>
-                            <svg width="32" height="32" viewBox="0 0 32 32" fill="#F0ECE9"
-                                xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation"
-                                focusable="false">
-                                <path
-                                    d="m16 .7c-8.437 0-15.3 6.863-15.3 15.3s6.863 15.3 15.3 15.3 15.3-6.863 15.3-15.3-6.863-15.3-15.3-15.3zm0 28c-4.021 0-7.605-1.884-9.933-4.81a12.425 12.425 0 0 1 6.451-4.4 6.507 6.507 0 0 1 -3.018-5.49c0-3.584 2.916-6.5 6.5-6.5s6.5 2.916 6.5 6.5a6.513 6.513 0 0 1 -3.019 5.491 12.42 12.42 0 0 1 6.452 4.4c-2.328 2.925-5.912 4.809-9.933 4.809z">
-                                </path>
+                            <svg width="32" height="32" viewBox="0 0 32 32" fill="#F0ECE9" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="presentation" focusable="false">
+                                <path d="m16 .7c-8.437 0-15.3 6.863-15.3 15.3s6.863 15.3 15.3 15.3 15.3-6.863 15.3-15.3-6.863-15.3-15.3-15.3zm0 28c-4.021 0-7.605-1.884-9.933-4.81a12.425 12.425 0 0 1 6.451-4.4 6.507 6.507 0 0 1 -3.018-5.49c0-3.584 2.916-6.5 6.5-6.5s6.5 2.916 6.5 6.5a6.513 6.513 0 0 1 -3.019 5.491 12.42 12.42 0 0 1 6.452 4.4c-2.328 2.925-5.912 4.809-9.933 4.809z"></path>
                             </svg>
                         </button>
                         <div class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdownMenuClickableInside">
@@ -137,11 +133,8 @@
                                     </span>
                                 </div>
                                 <div class="d-flex justify-content-between mt-2">
-                                    <button type="button" class="col-6 btn btn-primary" style="width: 48%;"
-                                        id="js-deposit">Deposit</button>
-                                    <button type="button" class="col-6 btn btn-outline-primary" style="width: 48%;"
-                                        id="js-withdraw">Withdraw
-                                    </button>
+                                    <button type="button" class="col-6 btn btn-primary" style="width: 48%;" id="js-deposit">Deposit</button>
+                                    <button type="button" class="col-6 btn btn-outline-primary" style="width: 48%;" id="js-withdraw">Withdraw</button>
                                 </div>
                             </div>
                             <hr>
@@ -171,6 +164,9 @@
                             <img src="" alt="team2 flag" class="flag mb-3 js-img">
                             <div class="h5 js-name"></div>
                         </div>
+                    </div>
+                    <div class="d-flex justify-content-center countdown text-center js-info-loading">
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                     </div>
                     <div class="d-flex justify-content-center countdown text-center d-none" id="js-countdown-wrapper">
                         <div>

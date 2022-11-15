@@ -115,40 +115,42 @@ $(document).ready(function () {
       }
     })
   })
-  $('#js-sign-in').click();
+  $(document).on('click', '#js-sign-in', function () {
+    getWeb3(null, indexSuccess, indexFaild)
+  })
 
-  // getWeb3(null,indexSuccess, indexFaild)
+  $('#js-sign-in').click();
 })
 
 async function indexSuccess() {
   $('#js-dashboard-wrapper').removeClass('d-none')
   getAccount()
-  // return true;
+
   getPredictions(function (myPredictions) {
     let myPredictionsHTML = ''
-    $('#js-dashboard-box').removeClass('placeholder')
+    $('.js-info-loading').addClass('d-none')
     if (myPredictions.length) {
       for (let i in myPredictions) {
         prediction_key = myPredictions[i]
         let prediction_class = prediction_key.replaceAll('.', '-')
         prediction_key_parted = prediction_key.split('.')
         myPredictionsHTML += '<div class="d-flex row-border align-items-center js-prediction-item js-' + prediction_class + '">\
-          <a class="col-5 d-md-flex" href="prediction.html?key=' + prediction_key + '">\
-            <div class="d-flex align-items-center mr-4">\
-                <img class="flag-small" src="images/flags/' + prediction_key_parted[3] + '-thumb.png" alt="">\
-                <div>' + prediction_key_parted[3] + ('undefined' !== typeof predictionsByKey[prediction_key].result ? ' (' + predictionsByKey[prediction_key].result.team1 + ')' : '') + '</div>\
-            </div>\
-            <div class="d-flex align-items-center justify-content-sm-start md-mb-4">\
-                <img class="flag-small ml-4" src="images/flags/' + prediction_key_parted[4] + '-thumb.png" alt="">\
-                <div>' + prediction_key_parted[4] + ('undefined' !== typeof predictionsByKey[prediction_key].result ? ' (' + predictionsByKey[prediction_key].result.team2 + ')' : '') + '</div>\
-            </div>\
-          </a>\
-        <div class="col-4 js-prediction-result">\
-            <div class="js-prediction-predicted"></div>\
-            <div class="fw-bolder js-prediction-status"></div>\
-        </div>\
-        <div class="col-3 d-md-flex text-end align-items-center js-prediction-operations"></div>\
-    </div>'
+            <a class="col-5 d-md-flex" href="prediction.html?key=' + prediction_key + '">\
+              <div class="d-flex align-items-center mr-4">\
+                  <img class="flag-small" src="images/flags/' + prediction_key_parted[3] + '-thumb.png" alt="">\
+                  <div>' + prediction_key_parted[3] + ('undefined' !== typeof predictionsByKey[prediction_key].result ? ' (' + predictionsByKey[prediction_key].result.team1 + ')' : '') + '</div>\
+              </div>\
+              <div class="d-flex align-items-center justify-content-sm-start md-mb-4">\
+                  <img class="flag-small ml-4" src="images/flags/' + prediction_key_parted[4] + '-thumb.png" alt="">\
+                  <div>' + prediction_key_parted[4] + ('undefined' !== typeof predictionsByKey[prediction_key].result ? ' (' + predictionsByKey[prediction_key].result.team2 + ')' : '') + '</div>\
+              </div>\
+            </a>\
+          <div class="col-4 js-prediction-result">\
+              <div class="js-prediction-predicted"></div>\
+              <div class="fw-bolder js-prediction-status"></div>\
+          </div>\
+          <div class="col-3 d-md-flex text-end align-items-center js-prediction-operations"></div>\
+      </div>'
       }
       $('#js-my-predictions-title').removeClass('d-none')
       $('#js-my-predictions-title').after(myPredictionsHTML)
@@ -250,10 +252,7 @@ async function indexSuccess() {
 }
 
 async function indexFaild(error) {
-  $('#js-sign-in')
-    .removeClass('d-none')
-    .removeClass('placeholder')
-    .html('Connect')
+
 }
 
 function betTimeout(i) {
