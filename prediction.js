@@ -67,6 +67,9 @@ $(document).ready(function () {
 
           // $('#js-toast-text').text('Bet rejected! Please try again.');
           // theToast.show();
+        } else if (null !== error) {
+          $('#js-error-text').text('Bet rejected! Please try again.')
+          $('#js-error-wrapper').removeClass('d-none')
         } else {
           showResults(predictionsInfo, 'set')
           getBalance(function (balance) {
@@ -222,12 +225,19 @@ async function setPrediction(prediction_key, prediction_result, prediction_amoun
       config.gas = '' + gas;
     }
 
-    contract.methods
-      .setPrediction(prediction_key, '' + prediction_result, '' + prediction_amount)
-      .send(config)
-      .then(function (tx) {
-        getPredictionResult((true !== tx.status) ? tx : null, prediction_key, callback)
-      })
+    try {
+      contract.methods
+        .setPrediction(prediction_key, '' + prediction_result, '' + prediction_amount)
+        .send(config)
+        .then(function (tx) {
+          console.log('tx', tx)
+          getPredictionResult((true !== tx.status) ? tx : null, prediction_key, callback)
+        }).catch(function (error) {
+          getPredictionResult(error, prediction_key, callback)
+        })
+    } catch (error) {
+      getPredictionResult(error, prediction_key, callback)
+    }
   })
 }
 

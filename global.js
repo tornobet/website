@@ -324,6 +324,8 @@ async function getBalance(callback) {
         callback(parseFloat(balance))
       }
       return balance
+    }).catch(function (error) {
+      console.log('error', error)
     })
 }
 
@@ -337,6 +339,8 @@ async function getPredictions(callback) {
         callback(myPredictions)
       }
       return myPredictions
+    }).catch(function (error) {
+      console.log('error', error)
     })
 }
 
@@ -358,6 +362,8 @@ async function getPredictionResult(error, prediction, callback) {
         callback(error, predictionsInfo)
       }
       return predictionsInfo
+    }).catch(function (error) {
+      callback(error, null)
     })
 }
 
@@ -416,6 +422,8 @@ async function getAmount(error, prediction, result, callback) {
           callback(results)
         }
         return results
+      }).catch(function (error) {
+        console.log('error', error)
       })
   } catch (error) {
     console.log('error', error)
@@ -509,6 +517,11 @@ async function withdrawValue(value, callback) {
               callback((true !== tx.status) ? tx : null)
             }
             return tx
+          }).catch(function (error) {
+            if (callback) {
+              callback(error)
+            }
+            return error
           })
       } catch (error) {
         if (callback) {
