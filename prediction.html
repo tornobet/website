@@ -11,6 +11,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://code.jquery.com/jquery-3.6.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.8.1/web3.min.js"></script>
+    <script type="text/javascript" src="https://unpkg.com/@walletconnect/web3-provider@1.2.1/dist/umd/index.min.js"></script> 
     <script src="./tokenPriceApi.js"></script>
     <script src="./global.js"></script>
     <script src="./prediction.js"></script>
@@ -23,40 +24,35 @@
         <div class="modal-dialog modal-sm modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                        id="js-modal-close"></button>
+                    <h5 class="modal-title d-none" id="js-modal-title"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" id="js-modal-close"></button>
                 </div>
                 <div class="modal-body text-center">
                     <img src="/images/bsc.svg" alt="" width="120px" height="120px" id="js-modal-image">
                     <svg width="120px" height="120px" viewBox="0 0 97 86" id="js-modal-icon">
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M97 43C97 66.748 77.748 86 54 86C43 86 43 86 43 86V0H54C77.748 0 97 19.252 97 43Z"
-                            fill="#AAABAE"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M97 43C97 66.748 77.748 86 54 86C43 86 43 86 43 86V0H54C77.748 0 97 19.252 97 43Z" fill="#AAABAE"></path>
                         <path d="M95.8311 53C91.3235 71.9254 74.3052 86 54 86H43V53H95.8311Z" fill="#797C81"></path>
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M86 43C86 66.748 66.748 86 43 86C19.252 86 0 66.748 0 43C0 19.252 19.252 0 43 0C66.748 0 86 19.252 86 43Z"
-                            fill="#D9DADC"></path>
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M75 43C75 60.673 60.673 75 43 75C25.327 75 11 60.673 11 43C11 25.327 25.327 11 43 11C60.673 11 75 25.327 75 43Z"
-                            fill="white"></path>
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M25.799 10.207C26.2132 10.9245 25.9674 11.8419 25.25 12.2561C19.8533 15.3719 15.3719 19.8533 12.2561 25.25C11.8419 25.9674 10.9245 26.2132 10.207 25.799C9.48961 25.3848 9.2438 24.4674 9.65801 23.75C13.0371 17.8972 17.8973 13.0371 23.75 9.658C24.4674 9.24379 25.3848 9.4896 25.799 10.207Z"
-                            fill="white"></path>
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M9.3088 27.6327C10.0758 27.9457 10.4439 28.8212 10.1309 29.5882L10.0782 29.7181C9.76828 30.4864 8.89422 30.8579 8.12596 30.548C7.3577 30.238 6.98616 29.364 7.2961 28.5957C7.31507 28.5487 7.33413 28.5017 7.35327 28.4548C7.66625 27.6878 8.54177 27.3197 9.3088 27.6327Z"
-                            fill="white"></path>
-                        <path
-                            d="M58.7782 46L59.8891 47.1109C61.4621 48.6839 61.9326 51.0495 61.0813 53.1048C60.23 55.16 58.2245 56.5 56 56.5H49C47.1694 56.5 45.5478 55.6057 44.548 54.2302L43.8891 54.8891C42.8576 55.9205 41.4587 56.5 40 56.5H33L44.548 46H58.7782Z"
-                            fill="#797C81"></path>
-                        <path
-                            d="M33 29.5H40C41.4587 29.5 42.8576 30.0795 43.8891 31.1109L44.548 31.7698C45.5478 30.3943 47.1694 29.5 49 29.5H56C58.2245 29.5 60.23 30.84 61.0813 32.8952C61.9326 34.9504 61.4621 37.3161 59.8891 38.8891L55.7782 43L58.7782 46H49.5L33 29.5Z"
-                            fill="#AAABAE"></path>
-                        <path fill-rule="evenodd" clip-rule="evenodd"
-                            d="M29.1109 31.1109C31.2588 28.963 34.7412 28.963 36.8891 31.1109L41 35.2218L45.1109 31.1109C47.2588 28.963 50.7412 28.963 52.8891 31.1109C55.037 33.2588 55.037 36.7412 52.8891 38.8891L48.7782 43L52.8891 47.1109C55.037 49.2588 55.037 52.7412 52.8891 54.8891C50.7412 57.037 47.2588 57.037 45.1109 54.8891L41 50.7782L36.8891 54.8891C34.7412 57.037 31.2588 57.037 29.1109 54.8891C26.963 52.7412 26.963 49.2588 29.1109 47.1109L33.2218 43L29.1109 38.8891C26.963 36.7412 26.963 33.2588 29.1109 31.1109Z"
-                            fill="#D9DADC"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M86 43C86 66.748 66.748 86 43 86C19.252 86 0 66.748 0 43C0 19.252 19.252 0 43 0C66.748 0 86 19.252 86 43Z" fill="#D9DADC"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M75 43C75 60.673 60.673 75 43 75C25.327 75 11 60.673 11 43C11 25.327 25.327 11 43 11C60.673 11 75 25.327 75 43Z" fill="white"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M25.799 10.207C26.2132 10.9245 25.9674 11.8419 25.25 12.2561C19.8533 15.3719 15.3719 19.8533 12.2561 25.25C11.8419 25.9674 10.9245 26.2132 10.207 25.799C9.48961 25.3848 9.2438 24.4674 9.65801 23.75C13.0371 17.8972 17.8973 13.0371 23.75 9.658C24.4674 9.24379 25.3848 9.4896 25.799 10.207Z" fill="white"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M9.3088 27.6327C10.0758 27.9457 10.4439 28.8212 10.1309 29.5882L10.0782 29.7181C9.76828 30.4864 8.89422 30.8579 8.12596 30.548C7.3577 30.238 6.98616 29.364 7.2961 28.5957C7.31507 28.5487 7.33413 28.5017 7.35327 28.4548C7.66625 27.6878 8.54177 27.3197 9.3088 27.6327Z" fill="white"></path>
+                        <path d="M58.7782 46L59.8891 47.1109C61.4621 48.6839 61.9326 51.0495 61.0813 53.1048C60.23 55.16 58.2245 56.5 56 56.5H49C47.1694 56.5 45.5478 55.6057 44.548 54.2302L43.8891 54.8891C42.8576 55.9205 41.4587 56.5 40 56.5H33L44.548 46H58.7782Z" fill="#797C81"></path>
+                        <path d="M33 29.5H40C41.4587 29.5 42.8576 30.0795 43.8891 31.1109L44.548 31.7698C45.5478 30.3943 47.1694 29.5 49 29.5H56C58.2245 29.5 60.23 30.84 61.0813 32.8952C61.9326 34.9504 61.4621 37.3161 59.8891 38.8891L55.7782 43L58.7782 46H49.5L33 29.5Z" fill="#AAABAE"></path>
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M29.1109 31.1109C31.2588 28.963 34.7412 28.963 36.8891 31.1109L41 35.2218L45.1109 31.1109C47.2588 28.963 50.7412 28.963 52.8891 31.1109C55.037 33.2588 55.037 36.7412 52.8891 38.8891L48.7782 43L52.8891 47.1109C55.037 49.2588 55.037 52.7412 52.8891 54.8891C50.7412 57.037 47.2588 57.037 45.1109 54.8891L41 50.7782L36.8891 54.8891C34.7412 57.037 31.2588 57.037 29.1109 54.8891C26.963 52.7412 26.963 49.2588 29.1109 47.1109L33.2218 43L29.1109 38.8891C26.963 36.7412 26.963 33.2588 29.1109 31.1109Z" fill="#D9DADC"></path>
                     </svg>
-                    <div class="fs-5 mt-4" id="js-modal-text"></div>
-                    <a href="#" target="_blank" class="btn btn-primary my-4" id="js-modal-link"></a>
+                    <div class="fs-5 my-4" id="js-modal-text"></div>
+                    <p class="text-primary" id="js-modal-p"></p>
+                    <div class="d-grid gap-2">
+                        <a href="#" class="btn btn-outline-primary text-start mb-1" id="js-modal-link-metamask">
+                            <img src="images/metamask.svg" width="24px" class="mx-1" alt="">
+                            <span></span>
+                        </a>
+                        <a href="#" class="btn btn-outline-primary text-start mb-2" id="js-modal-link-wallet-connect">
+                            <img src="images/wallet-connect.svg" width="24px" class="mx-1" alt="">
+                            <span></span>
+                        </a>
+                    </div>
+                    <a href="#" target="_blank" class="btn btn-primary mb-4" id="js-modal-link"></a>
                 </div>
             </div>
         </div>
@@ -76,42 +72,9 @@
                                 aria-label="Close"></button>
                         </div>
                     </div>
-                    <!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#theModal">
-                Launch demo modal
-            </button> -->
 
-                    <div class="modal fade" id="theModal" tabindex="-1" aria-labelledby="theModalLabel"
-                        aria-hidden="true">
-                        <div class="modal-dialog modal-sm modal-dialog-centered">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                                        id="js-modal-close"></button>
-                                </div>
-                                <div class="modal-body text-center">
-                                    <img src="/images/bsc.svg" alt="" width="120px" height="120px" id="js-modal-image">
-                                    <svg width="120px" height="120px" viewBox="0 0 97 86" id="js-modal-icon">
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M97 43C97 66.748 77.748 86 54 86C43 86 43 86 43 86V0H54C77.748 0 97 19.252 97 43Z" fill="#AAABAE"></path>
-                                        <path d="M95.8311 53C91.3235 71.9254 74.3052 86 54 86H43V53H95.8311Z" fill="#797C81"></path>
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M86 43C86 66.748 66.748 86 43 86C19.252 86 0 66.748 0 43C0 19.252 19.252 0 43 0C66.748 0 86 19.252 86 43Z" fill="#D9DADC"></path>
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M75 43C75 60.673 60.673 75 43 75C25.327 75 11 60.673 11 43C11 25.327 25.327 11 43 11C60.673 11 75 25.327 75 43Z" fill="white"></path>
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M25.799 10.207C26.2132 10.9245 25.9674 11.8419 25.25 12.2561C19.8533 15.3719 15.3719 19.8533 12.2561 25.25C11.8419 25.9674 10.9245 26.2132 10.207 25.799C9.48961 25.3848 9.2438 24.4674 9.65801 23.75C13.0371 17.8972 17.8973 13.0371 23.75 9.658C24.4674 9.24379 25.3848 9.4896 25.799 10.207Z" fill="white"></path>
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M9.3088 27.6327C10.0758 27.9457 10.4439 28.8212 10.1309 29.5882L10.0782 29.7181C9.76828 30.4864 8.89422 30.8579 8.12596 30.548C7.3577 30.238 6.98616 29.364 7.2961 28.5957C7.31507 28.5487 7.33413 28.5017 7.35327 28.4548C7.66625 27.6878 8.54177 27.3197 9.3088 27.6327Z" fill="white"></path>
-                                        <path d="M58.7782 46L59.8891 47.1109C61.4621 48.6839 61.9326 51.0495 61.0813 53.1048C60.23 55.16 58.2245 56.5 56 56.5H49C47.1694 56.5 45.5478 55.6057 44.548 54.2302L43.8891 54.8891C42.8576 55.9205 41.4587 56.5 40 56.5H33L44.548 46H58.7782Z" fill="#797C81"></path>
-                                        <path d="M33 29.5H40C41.4587 29.5 42.8576 30.0795 43.8891 31.1109L44.548 31.7698C45.5478 30.3943 47.1694 29.5 49 29.5H56C58.2245 29.5 60.23 30.84 61.0813 32.8952C61.9326 34.9504 61.4621 37.3161 59.8891 38.8891L55.7782 43L58.7782 46H49.5L33 29.5Z" fill="#AAABAE"></path>
-                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M29.1109 31.1109C31.2588 28.963 34.7412 28.963 36.8891 31.1109L41 35.2218L45.1109 31.1109C47.2588 28.963 50.7412 28.963 52.8891 31.1109C55.037 33.2588 55.037 36.7412 52.8891 38.8891L48.7782 43L52.8891 47.1109C55.037 49.2588 55.037 52.7412 52.8891 54.8891C50.7412 57.037 47.2588 57.037 45.1109 54.8891L41 50.7782L36.8891 54.8891C34.7412 57.037 31.2588 57.037 29.1109 54.8891C26.963 52.7412 26.963 49.2588 29.1109 47.1109L33.2218 43L29.1109 38.8891C26.963 36.7412 26.963 33.2588 29.1109 31.1109Z" fill="#D9DADC"></path>
-                                    </svg>
-                                    <div class="fs-5 my-4" id="js-modal-text"></div>
-                                    <a href="#" target="_blank" class="btn btn-primary mb-4" id="js-modal-link"></a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="wallet btn btn-outline-secondary d-flex align-items-center placeholder"
-                        id="js-not-signed">
-                        <img class="wallet-avatar" src="images/fox.svg" alt="">
-                        <div>Connect</div>
+                    <div class="wallet btn btn-outline-secondary d-flex align-items-center" success="indexSuccess" failed="indexFailed" id="js-sign-in">
+                        <div>Connect Wallet</div>
                     </div>
                     <div class="wallet btn-group d-none" id="js-signed">
                         <button type="button"
@@ -139,7 +102,7 @@
                             <div class="small mb-1">Connected with:</div>
                             <div class="fw-bolder wallet-code js-wallet-code"></div>
 
-                            <div class="d-grid gap-2 my-4 d-none">
+                            <div class="d-grid gap-2 my-4" id="js-disconnect">
                                 <button class="btn btn-outline-primary">Disconnect wallet</button>
                             </div>
                             <hr>

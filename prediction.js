@@ -29,9 +29,9 @@ $(document).ready(function () {
       $('#js-vs').text(prediction.result.team1 + ' : ' + prediction.result.team2)
     }
 
-    getWeb3(function () {
-      pageSuccess(prediction)
-    }, pageFaild)
+    getWeb3(null,function () {
+      predictionSuccess(prediction)
+    }, predictionFaild)
   })
 
   $(document).on('click', '#js-set-prediction', function () {
@@ -99,7 +99,7 @@ $(document).ready(function () {
   })
 })
 
-async function pageSuccess(prediction) {
+async function predictionSuccess(prediction) {
   getAccount()
 
   getPredictionResult(null, prediction, async function (error, predictionsInfo) {
@@ -107,7 +107,7 @@ async function pageSuccess(prediction) {
   })
 }
 
-async function pageFaild() { }
+async function predictionFaild() { }
 
 async function showResults(predictionsInfo, mode = 'show') {
   let predictionInfo = predictionsInfo[0],

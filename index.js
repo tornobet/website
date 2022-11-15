@@ -115,7 +115,9 @@ $(document).ready(function () {
       }
     })
   })
-  getWeb3(indexSuccess, indexFaild)
+  $('#js-sign-in').click();
+
+  // getWeb3(null,indexSuccess, indexFaild)
 })
 
 async function indexSuccess() {
@@ -248,7 +250,7 @@ async function indexSuccess() {
 }
 
 async function indexFaild(error) {
-  $('#js-not-signed')
+  $('#js-sign-in')
     .removeClass('d-none')
     .removeClass('placeholder')
     .html('Connect')

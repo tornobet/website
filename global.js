@@ -43,9 +43,42 @@ $(document).ready(function () {
     input.trigger('change')
   })
 
-  $(document).on('click', '#js-not-signed', function () {
-    $(this).addClass('placeholder')
-    getWeb3(indexSuccess, indexFaild)
+  $(document).on('click', '#js-modal-link-metamask', function () {
+    $(this).removeClass('text-start').addClass('text-center').html(
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>',
+    )
+    setCookie("connected_to", 'metamask', 365);
+    // localStorage.setItem("connected_to", 'metamask');
+    getWeb3('metamask', window[$('#js-sign-in').attr('success')], window[$('#js-sign-in').attr('failed')])
+  });
+
+  $(document).on('click', '#js-modal-link-wallet-connect', function () {
+    $(this).removeClass('text-start').addClass('text-center').html(
+      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>',
+    )
+    setCookie("connected_to", 'wallet-connect', 365);
+    // localStorage.setItem("connected_to", 'wallet-connect');
+    getWeb3('wallet-connect', window[$('#js-sign-in').attr('success')], window[$('#js-sign-in').attr('failed')])
+  });
+
+  $(document).on('click', '#js-sign-in', function () {
+    getWeb3(null, window[$(this).attr('success')], window[$(this).attr('failed')])
+  })
+
+  $(document).on('click', '#js-disconnect', function () {
+    setCookie("connected_to", '', 1);
+    $('#js-signed').addClass('d-none')
+    $('#js-sign-in').removeClass('d-none').removeClass('placeholder')
+    // getWeb3(null, window[$(this).attr('success')], window[$(this).attr('failed')])
+  })
+
+  $(document).on('click', '#js-modal-close, #theModal', function () {
+    setTimeout(function () {
+      if (!$('#theModal').hasClass('show')) {
+        callModal({ status: 'hide' })
+        $('#js-sign-in').removeClass('placeholder')
+      }
+    }, 2000)
   })
 
   $(document).on('click', '#js-deposit', async function () {
@@ -89,81 +122,160 @@ $(document).ready(function () {
   })
 })
 
-async function getWeb3(success, failed) {
-  // web3 provider with fallback for old version
-  if ('undefined' !== typeof window.ethereum) {
-    window.web3 = new Web3(window.ethereum)
-    /*try {
-      // Request account access if needed
-      const accounts = await window.ethereum.send('eth_requestAccounts');
-      // const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-      // Accounts now exposed, use them
-      window.ethereum.send('eth_sendTransaction', { from: accounts[0], ... })
-    } catch (error) {
-      // User denied account access
-    }*/
+function setCookie(cname, cvalue, exdays) {
+  const d = new Date();
+  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+  let expires = "expires=" + d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";SameSite=Lax;" + expires + ";path=/";
+}
 
+function getCookie(cname) {
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
+
+async function getWeb3(wallet_name, success, failed) {
+  // let connected_to = localStorage.getItem("connected_to");
+  let connected_to = getCookie("connected_to");
+  console.log('connected_to', connected_to)
+  if ('metamask' === wallet_name || (null === wallet_name && 'metamask' === connected_to)) {
+    if ('undefined' !== typeof window.ethereum) {
+      console.log('window.ethereum')
+      window.web3 = new Web3(window.ethereum)
+      /*try {
+        // Request account access if needed
+        const accounts = await window.ethereum.send('eth_requestAccounts');
+        // const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+        // Accounts now exposed, use them
+        window.ethereum.send('eth_sendTransaction', { from: accounts[0], ... })
+      } catch (error) {
+        // User denied account access
+      }*/
+
+      try {
+        const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+        if (accounts.length == 0) {
+          setCookie("connected_to", '', 1);
+          callModal({
+            icon: true,
+            text: 'No account found! Make sure the Ethereum client is configured properly.',
+            status: 'show'
+          })
+          if (failed) {
+            failed('No account found!')
+          }
+          return false
+        }
+        account = accounts[0]
+        console.log('account', account)
+        // detect account change
+        window.ethereum.on('accountsChanged', function (accounts) {
+          checkAccount(accounts)
+        })
+        // detect Network change
+        window.ethereum.on('chainChanged', (chainId) => {
+          checkNetwork(parseInt(chainId))
+        })
+      } catch (error) {
+        console.log('error', error)
+        setCookie("connected_to", '', 1);
+        $('#js-sign-in').removeClass('placeholder')
+        callModal({ status: 'hide' })
+        if (failed) {
+          failed('user rejected permission')
+        }
+        return false
+      }
+    }
+  } else if ('wallet-connect' === wallet_name || (null === wallet_name && 'wallet-connect' === connected_to)) {
+    const provider = new WalletConnectProvider.default({ rpc: { 97: "https://data-seed-prebsc-1-s1.binance.org:8545/" } });
+    // const provider = new WalletConnectProvider.default({ rpc: { 56: "https://bsc-dataseed.binance.org/g" } });
     try {
-      const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' })
+      await provider.enable()
+      window.web3 = new Web3(provider)
+      var accounts = await window.web3.eth.getAccounts()
       if (accounts.length == 0) {
-        $('#js-modal-image').addClass('d-none')
-        $('#js-modal-icon').removeClass('d-none')
-        $('#js-modal-text').html(
-          'No account found! Make sure the Ethereum client is configured properly.',
-        )
-        $('#js-modal-link').addClass('d-none').text('').attr('href', '#')
-        $('#theModal').modal('show')
-        failed('No account found!')
+        setCookie("connected_to", '', 1);
+        callModal({
+          icon: true,
+          text: 'No account found! Make sure the Ethereum client is configured properly.',
+          status: 'show'
+        })
+        if (failed) {
+          failed('No account found!')
+        }
         return false
       }
       account = accounts[0]
       console.log('account', account)
-      // detect account change
-      window.ethereum.on('accountsChanged', function (accounts) {
-        checkAccount(accounts)
-      })
-      // detect Network change
-      window.ethereum.on('chainChanged', (chainId) => {
-        checkNetwork(parseInt(chainId))
-      })
-      // console.log(_metamask.isEnabled)
-      //await _metamask.isApproved
-      // user approved permission
     } catch (error) {
       console.log('error', error)
-      // user rejected permission
-      failed('user rejected permission')
+      setCookie("connected_to", '', 1);
+      $('#js-sign-in').removeClass('placeholder')
+      callModal({ status: 'hide' })
+      if (failed) {
+        failed('user rejected permission')
+      }
+
       return false
     }
   } else {
-    /*else if (window.web3) {
-    //window.web3 = new Web3(window.web3.currentProvider.enable())
-    window.web3 = new Web3(window.eth.givenProvider || window.web3.currentProvider.enable())
-    // no need to ask for permission
-  }*/
-    $('#js-modal-image').addClass('d-none')
-    $('#js-modal-icon').removeClass('d-none')
-    $('#js-modal-text').html('Non-Ethereum browser detected.')
-    $('#js-modal-link')
-      .removeClass('d-none')
-      .text('Download Metamask')
-      .attr('href', 'https://metamask.io/download/')
-    $('#theModal').modal('show')
-    failed('Non-Ethereum browser detected.')
+    $('#js-sign-in').addClass('placeholder')
+    callModal({
+      login: 'all',
+      title: 'Connect Wallet',
+      p: 'Choose how you want to connect. There are several wallet providers.',
+      status: 'show'
+    })
+    return true;
+  }
+
+  /*if (window.web3) {
+   console.log('window.web3')
+   //window.web3 = new Web3(window.web3.currentProvider.enable())
+   window.web3 = new Web3(window.eth.givenProvider || window.web3.currentProvider.enable())
+   // no need to ask for permission
+ } */
+
+  if (window.web3) {
+    console.log('web3 connected.')
+    $('#js-sign-in').removeClass('placeholder')
+    callModal({ status: 'hide' })
+    if (!(await checkNetwork())) {
+      return true
+    }
+
+    //contract instance
+    // contract = window.ethereum.request({method: 'eth_requestAccounts', params: [account] }, abi, contractAddress);
+    contract = new window.web3.eth.Contract(abi, contractAddress)
+    // const accounts = await window.ethereum.request({ method: 'eth_accounts' });
+
+    if (success) {
+      success()
+    }
+  } else {
+    $('#js-sign-in').addClass('placeholder')
+    callModal({
+      login: 'wallet-connect',
+      title: 'Connect Wallet',
+      p: 'Choose how you want to connect. There are several wallet providers.',
+      status: 'show'
+    })
+    if (failed) {
+      failed('Non-Ethereum browser detected.')
+    }
     return false
-  }
-
-  if (!(await checkNetwork())) {
-    return true
-  }
-
-  //contract instance
-  // contract = window.ethereum.request({method: 'eth_requestAccounts', params: [account] }, abi, contractAddress);
-  contract = new window.web3.eth.Contract(abi, contractAddress)
-  // const accounts = await window.ethereum.request({ method: 'eth_accounts' });
-
-  if ('function' === typeof success) {
-    success()
   }
 
   return false
@@ -189,7 +301,6 @@ async function checkNetwork(chainId) {
     } else {
       $('#js-top-fixed-error').removeClass('d-none').addClass('d-none')
       $('body').css('marginTop', 0)
-      // $('#theModal').modal('hide');
       return true
     }
   }
@@ -199,11 +310,6 @@ async function checkNetwork(chainId) {
   )
   $('#js-top-fixed-error').removeClass('d-none')
   $('body').css('marginTop', $('#js-top-fixed-error').css('height'))
-  /*$('#js-modal-icon').addClass('d-none');
-  $('#js-modal-image').removeClass('d-none');
-  $('#js-modal-text').html('Change the network to <br><span class="fw-bolder">Binance Smart Chain</span> mainnet!');
-  $('#js-modal-link').addClass('d-none').text('').attr('href', '#');
-  $('#theModal').modal('show');*/
 }
 
 async function getBalance(callback) {
@@ -322,7 +428,7 @@ function getAccount() {
   tmp = tmp.replace(tmp.substring(9, account.length - 4), ' ... ')
   $('.js-wallet-code').html(tmp)
   $('.js-wallet-code').attr('title', account)
-  $('#js-not-signed').addClass('d-none').removeClass('placeholder')
+  $('#js-sign-in').addClass('d-none').removeClass('placeholder')
   $('#js-signed').removeClass('d-none')
   window.web3.eth.defaultAccount = account
 }
@@ -414,5 +520,66 @@ async function withdrawValue(value, callback) {
       callback(error)
     }
     return error
+  }
+}
+
+function callModal(config) {
+  if ('undefined' !== typeof config.title) {
+    $('#js-modal-title').text(config.title).removeClass('d-none')
+  } else {
+    $('#js-modal-title').text('').addClass('d-none')
+  }
+
+  $('#js-modal-image').addClass('d-none')
+  if ('undefined' !== typeof config.image) {
+    $('#js-modal-image').removeClass('d-none')
+  } else {
+    $('#js-modal-image').addClass('d-none')
+  }
+
+  if ('undefined' !== typeof config.icon) {
+    $('#js-modal-icon').removeClass('d-none')
+  } else {
+    $('#js-modal-icon').addClass('d-none')
+  }
+
+  if ('undefined' !== typeof config.text) {
+    $('#js-modal-text').text(config.text).removeClass('d-none')
+  } else {
+    $('#js-modal-text').addClass('d-none')
+  }
+
+  if ('undefined' !== typeof config.p) {
+    $('#js-modal-p').text(config.p).removeClass('d-none')
+  } else {
+    $('#js-modal-p').text('').addClass('d-none')
+  }
+
+  if ('undefined' !== typeof config.login) {
+    if (('metamask' === config.login || 'all' === config.login) && 'undefined' !== typeof window.ethereum) {
+      $('#js-modal-link-metamask').removeClass('d-none').removeClass('text-center').addClass('text-start').html('<img src="images/metamask.svg" width="24px" class="mx-1" alt=""><span>Metamask</span>')
+    } else {
+      $('#js-modal-link-metamask').addClass('d-none').removeClass('text-center').addClass('text-start').text('')
+    }
+    if ('wallet-connect' === config.login || 'all' === config.login) {
+      $('#js-modal-link-wallet-connect').removeClass('d-none').removeClass('text-center').addClass('text-start').html('<img src="images/wallet-connect.svg" width="24px" class="mx-1" alt=""><span>Wallet Connect</span>')
+    } else {
+      $('#js-modal-link-wallet-connect').addClass('d-none').removeClass('text-center').addClass('text-start').text('')
+    }
+  } else {
+    $('#js-modal-link-metamask').addClass('d-none').removeClass('text-center').addClass('text-start').text('')
+    $('#js-modal-link-wallet-connect').addClass('d-none').removeClass('text-center').addClass('text-start').text('')
+  }
+
+  if ('undefined' !== typeof config.link) {
+    $('#js-modal-link').text('undefined' !== typeof config.link.text ? config.link.text : '').removeClass('d-none').attr('href', 'undefined' !== typeof config.link.href ? config.link.href : '#')
+  } else {
+    $('#js-modal-link').addClass('d-none').text('').attr('href', '#')
+  }
+
+  if ('undefined' !== typeof config.status && 'show' === config.status) {
+    $('#theModal').modal('show')
+  } else {
+    $('#theModal').modal('hide')
   }
 }
