@@ -1,4 +1,3 @@
-alert(navigator.userAgent)
 var account, contract, predictions, predictionsByKey = {}, seconds, theToast, coinPrice = 0.0
 
 const correctNetId = 56,
