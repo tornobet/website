@@ -1,0 +1,20 @@
+{
+    "name": "Tornobet",
+    "short_name": "Tornobet",
+    "lang": "en",
+    "dir": "ltr",
+    "description": "Tornobet is an online crypto betting platform that you can bet on various sport tournaments!",
+    "start_url": "https://tornobet.com",
+    "display": "standalone",
+    "background_color": "#540166",
+    "theme_color": "#540166",
+    "version": "0.0.1",
+    "manifest_version": "0.0.1",
+    "orientation": "portrait-primary",
+    "permissions": [
+        "notifications",
+        "webRequest",
+        "background"
+    ],
+    "author": "tornobet"
+}
