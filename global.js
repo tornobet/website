@@ -1,6 +1,6 @@
 var account, contract, predictions, predictionsByKey = {}, seconds, theToast, coinPrice = 0.0
 
-const correctNetId = 97,
+const correctNetId = 56,
   etherValue = 1000000000000000000,
   min_qty = 0.01,
   step_qty = 0.01,
