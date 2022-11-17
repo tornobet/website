@@ -43,22 +43,20 @@ $(document).ready(function () {
     input.trigger('change')
   })
 
-  $(document).on('click', '#js-modal-link-metamask', function () {
+  $(document).on('click', '#js-modal-link-detected-wallet', function () {
     $(this).removeClass('text-start').addClass('text-center').html(
       '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>',
     )
-    setCookie("connected_to", 'metamask', 365);
-    // localStorage.setItem("connected_to", 'metamask');
-    getWeb3('metamask', window[$('#js-sign-in').attr('success')], window[$('#js-sign-in').attr('failed')])
-  });
 
-  $(document).on('click', '#js-modal-link-trustwallet', function () {
-    $(this).removeClass('text-start').addClass('text-center').html(
-      '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>',
-    )
-    setCookie("connected_to", 'trustwallet', 365);
-    // localStorage.setItem("connected_to", 'trustwallet');
-    getWeb3('trustwallet', window[$('#js-sign-in').attr('success')], window[$('#js-sign-in').attr('failed')])
+    if ('undefined' !== window.trustwallet) {
+      setCookie("connected_to", 'trustwallet', 365);
+      // localStorage.setItem("connected_to", 'trustwallet');
+      getWeb3('trustwallet', window[$('#js-sign-in').attr('success')], window[$('#js-sign-in').attr('failed')])
+    } else {
+      setCookie("connected_to", 'metamask', 365);
+      // localStorage.setItem("connected_to", 'metamask');
+      getWeb3('metamask', window[$('#js-sign-in').attr('success')], window[$('#js-sign-in').attr('failed')])
+    }
   });
 
   $(document).on('click', '#js-modal-link-wallet-connect', function () {
@@ -581,18 +579,19 @@ function callModal(config) {
   if ('undefined' !== typeof config.login) {
     $('#modal-body').removeClass('text-center');
     if ('metamask' === config.login && 'undefined' !== typeof window.ethereum) {
-      $('#js-modal-link-metamask').removeClass('d-none').removeClass('text-center').addClass('text-start').html('<img src="images/metamask.svg" width="24px" class="mx-1" alt=""><span>Metamask</span>')
+      $('#js-modal-link-detected-wallet')
+      $('#js-modal-link-detected-wallet').removeClass('d-none').removeClass('text-center').addClass('text-start').html('<img src="images/metamask.svg" width="24px" class="mx-1" alt=""><span>Metamask</span>')
     } else if ('trustwallet' === config.login && 'undefined' !== typeof window.trustwallet) {
-      $('#js-modal-link-metamask').removeClass('d-none').removeClass('text-center').addClass('text-start').html('<img src="images/TWT.svg" width="24px" class="mx-1" alt=""><span>Trust Wallet</span>')
+      $('#js-modal-link-detected-wallet').removeClass('d-none').removeClass('text-center').addClass('text-start').html('<img src="images/TWT.svg" width="24px" class="mx-1" alt=""><span>Trust Wallet</span>')
     } else if ('all' === config.login && ('undefined' !== typeof window.ethereum || 'undefined' !== typeof window.trustwallet)) {
-      $('#js-modal-link-metamask').removeClass('d-none').removeClass('text-center').addClass('text-start')
+      $('#js-modal-link-detected-wallet').removeClass('d-none').removeClass('text-center').addClass('text-start')
       if ('undefined' !== typeof window.ethereum) {
-        $('#js-modal-link-metamask').html('<img src="images/metamask.svg" width="24px" class="mx-1" alt=""><span>Metamask</span>')
+        $('#js-modal-link-detected-wallet').html('<img src="images/metamask.svg" width="24px" class="mx-1" alt=""><span>Metamask</span>')
       } else if ('undefined' !== typeof window.trustwallet) {
-        $('#js-modal-link-metamask').html('<img src="images/TWT.svg" width="24px" class="mx-1" alt=""><span>Trust Wallet</span>')
+        $('#js-modal-link-detected-wallet').html('<img src="images/TWT.svg" width="24px" class="mx-1" alt=""><span>Trust Wallet</span>')
       }
     } else {
-      $('#js-modal-link-metamask').addClass('d-none').removeClass('text-center').addClass('text-start').text('')
+      $('#js-modal-link-detected-wallet').addClass('d-none').removeClass('text-center').addClass('text-start').text('')
     }
 
     if ('wallet-connect' === config.login || 'all' === config.login) {
@@ -602,7 +601,7 @@ function callModal(config) {
     }
   } else {
     $('#modal-body').addClass('text-center');
-    $('#js-modal-link-metamask').addClass('d-none').removeClass('text-center').addClass('text-start').text('')
+    $('#js-modal-link-detected-wallet').addClass('d-none').removeClass('text-center').addClass('text-start').text('')
     $('#js-modal-link-wallet-connect').addClass('d-none').removeClass('text-center').addClass('text-start').text('')
   }
 
