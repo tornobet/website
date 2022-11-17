@@ -48,7 +48,7 @@ $(document).ready(function () {
       '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>',
     )
 
-    if ('undefined' !== window.trustwallet) {
+    if ('undefined' !== typeof window.trustwallet) {
       setCookie("connected_to", 'trustwallet', 365);
       // localStorage.setItem("connected_to", 'trustwallet');
       getWeb3('trustwallet', window[$('#js-sign-in').attr('success')], window[$('#js-sign-in').attr('failed')])
@@ -578,17 +578,16 @@ function callModal(config) {
 
   if ('undefined' !== typeof config.login) {
     $('#modal-body').removeClass('text-center');
-    if ('metamask' === config.login && 'undefined' !== typeof window.ethereum) {
-      $('#js-modal-link-detected-wallet')
-      $('#js-modal-link-detected-wallet').removeClass('d-none').removeClass('text-center').addClass('text-start').html('<img src="images/metamask.svg" width="24px" class="mx-1" alt=""><span>Metamask</span>')
-    } else if ('trustwallet' === config.login && 'undefined' !== typeof window.trustwallet) {
+    if ('trustwallet' === config.login && 'undefined' !== typeof window.trustwallet) {
       $('#js-modal-link-detected-wallet').removeClass('d-none').removeClass('text-center').addClass('text-start').html('<img src="images/TWT.svg" width="24px" class="mx-1" alt=""><span>Trust Wallet</span>')
+    } else if ('metamask' === config.login && 'undefined' !== typeof window.ethereum) {
+      $('#js-modal-link-detected-wallet').removeClass('d-none').removeClass('text-center').addClass('text-start').html('<img src="images/metamask.svg" width="24px" class="mx-1" alt=""><span>Metamask</span>')
     } else if ('all' === config.login && ('undefined' !== typeof window.ethereum || 'undefined' !== typeof window.trustwallet)) {
       $('#js-modal-link-detected-wallet').removeClass('d-none').removeClass('text-center').addClass('text-start')
-      if ('undefined' !== typeof window.ethereum) {
-        $('#js-modal-link-detected-wallet').html('<img src="images/metamask.svg" width="24px" class="mx-1" alt=""><span>Metamask</span>')
-      } else if ('undefined' !== typeof window.trustwallet) {
+      if ('undefined' !== typeof window.trustwallet) {
         $('#js-modal-link-detected-wallet').html('<img src="images/TWT.svg" width="24px" class="mx-1" alt=""><span>Trust Wallet</span>')
+      } else if ('undefined' !== typeof window.ethereum) {
+        $('#js-modal-link-detected-wallet').html('<img src="images/metamask.svg" width="24px" class="mx-1" alt=""><span>Metamask</span>')
       }
     } else {
       $('#js-modal-link-detected-wallet').addClass('d-none').removeClass('text-center').addClass('text-start').text('')
