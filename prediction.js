@@ -68,7 +68,7 @@ $(document).ready(function () {
           // $('#js-toast-text').text('Bet rejected! Please try again.');
           // theToast.show();
         } else if (null !== error) {
-          if (-32000 === error.code) {
+          if ([-32000, -32603].includes(error.code)) {
             $('#js-error-text').text('Wallet balance is insufficient. Please get some BNB!')
           } else {
             $('#js-error-text').text('Bet rejected! Please try again.')
