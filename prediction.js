@@ -68,7 +68,11 @@ $(document).ready(function () {
           // $('#js-toast-text').text('Bet rejected! Please try again.');
           // theToast.show();
         } else if (null !== error) {
-          $('#js-error-text').text('Bet rejected! Please try again.')
+          if (-32000 === error.code) {
+            $('#js-error-text').text('Wallet balance is insufficient. Please get some BNB!')
+          } else {
+            $('#js-error-text').text('Bet rejected! Please try again.')
+          }
           $('#js-error-wrapper').removeClass('d-none')
         } else {
           showResults(predictionsInfo, 'set')
@@ -217,15 +221,15 @@ async function setPrediction(prediction_key, prediction_result, prediction_amoun
       value = prediction_amount - balance
     }
 
-    let config = { from: account }
-    if (value > 0) {
-      config.value = '' + value
-
-      let gas = await contract.methods.setPrediction(prediction_key, '' + prediction_result, '' + prediction_amount).estimateGas(config);
-      config.gas = '' + gas;
-    }
-
     try {
+      let config = { from: account }
+      if (value > 0) {
+        config.value = '' + value
+
+        let gas = await contract.methods.setPrediction(prediction_key, '' + prediction_result, '' + prediction_amount).estimateGas(config)
+        config.gas = '' + gas;
+      }
+
       contract.methods
         .setPrediction(prediction_key, '' + prediction_result, '' + prediction_amount)
         .send(config)
@@ -233,10 +237,10 @@ async function setPrediction(prediction_key, prediction_result, prediction_amoun
           console.log('tx', tx)
           getPredictionResult((true !== tx.status) ? tx : null, prediction_key, callback)
         }).catch(function (error) {
-          getPredictionResult(error, prediction_key, callback)
+          getPredictionResult(getErrorObject(error), prediction_key, callback)
         })
     } catch (error) {
-      getPredictionResult(error, prediction_key, callback)
+      getPredictionResult(getErrorObject(error), prediction_key, callback)
     }
   })
 }

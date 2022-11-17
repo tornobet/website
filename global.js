@@ -369,7 +369,7 @@ async function getPredictionResult(error, prediction, callback) {
       }
       return predictionsInfo
     }).catch(function (error) {
-      callback(error, null)
+      callback(getErrorObject(error), null)
     })
 }
 
@@ -403,9 +403,9 @@ async function getRewards(error, prediction, callback) {
     })
     .on('error', function (error, receipt) {
       if (callback) {
-        callback(error, receipt)
+        callback(getErrorObject(error), receipt)
       }
-      return error
+      return getErrorObject(error)
     })
 }
 
@@ -469,9 +469,9 @@ async function depositValue(value, callback) {
       })
       .on('error', function (error, receipt) {
         if (callback) {
-          callback(error, receipt)
+          callback(getErrorObject(error), receipt)
         }
-        return error
+        return getErrorObject(error)
       })
 
     /*const transactionHash = await window.ethereum.request({
@@ -490,9 +490,9 @@ async function depositValue(value, callback) {
     return transactionHash;*/
   } catch (error) {
     if (callback) {
-      callback(error)
+      callback(getErrorObject(error))
     }
-    return error
+    return getErrorObject(error)
   }
 }
 
@@ -525,22 +525,22 @@ async function withdrawValue(value, callback) {
             return tx
           }).catch(function (error) {
             if (callback) {
-              callback(error)
+              callback(getErrorObject(error))
             }
-            return error
+            return getErrorObject(error)
           })
       } catch (error) {
         if (callback) {
-          callback(error)
+          callback(getErrorObject(error))
         }
-        return error
+        return getErrorObject(error)
       }
     })
   } catch (error) {
     if (callback) {
-      callback(error)
+      callback(getErrorObject(error))
     }
-    return error
+    return getErrorObject(error)
   }
 }
 
@@ -615,4 +615,16 @@ function callModal(config) {
   } else {
     $('#theModal').modal('hide')
   }
+}
+
+function getErrorObject(error) {
+  if ('undefined' === typeof error.code) {
+    let error_parted = error.toString().split('{');
+
+    if (error_parted.length > 1) {
+      return JSON.parse('{' + error_parted[1]);
+    }
+  }
+
+  return error;
 }
