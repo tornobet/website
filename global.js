@@ -1,3 +1,8 @@
+if ('undefined' !== typeof window.trustwallet) {
+  alert('trust')
+} else if ('undefined' !== typeof window.ethereum) {
+  alert('metamask')
+}
 var account, contract, predictions, predictionsByKey = {}, seconds, theToast, coinPrice = 0.0
 
 const correctNetId = 56,
