@@ -585,10 +585,8 @@ function callModal(config) {
     } else if ('all' === config.login && ('undefined' !== typeof window.ethereum || 'undefined' !== typeof window.trustwallet)) {
       $('#js-modal-link-detected-wallet').removeClass('d-none').removeClass('text-center').addClass('text-start')
       if ('undefined' !== typeof window.trustwallet) {
-        alert('trustwallet')
         $('#js-modal-link-detected-wallet').html('<img src="images/TWT.svg" width="24px" class="mx-1" alt=""><span>Trust Wallet</span>')
       } else if ('undefined' !== typeof window.ethereum) {
-        alert('metamask')
         $('#js-modal-link-detected-wallet').html('<img src="images/metamask.svg" width="24px" class="mx-1" alt=""><span>Metamask</span>')
       }
     } else {
