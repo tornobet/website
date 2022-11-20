@@ -7,6 +7,9 @@ $(document).ready(function () {
       return prediction_key == value.category + '.' + value.type + '.' + value.group + '.' + value.team1 + '.' + value.team2
     });
     prediction = filtered_prediction[0];
+    if ('canceled'===prediction.status){
+      window.location = '/'
+    }
     // prediction.started_at = parseInt((new Date().getTime() / 1000) + 10)
     remain_seconds = parseInt(prediction.started_at) - parseInt((new Date().getTime() / 1000));
 
@@ -67,6 +70,7 @@ $(document).ready(function () {
 
           // $('#js-toast-text').text('Bet rejected! Please try again.');
           // theToast.show();
+          $('#js-set-prediction').prop('disabled', false).text('Place a bet')
         } else if (null !== error) {
           if ([-32000, -32603].includes(error.code)) {
             $('#js-error-text').text('Wallet balance is insufficient. Please get some BNB!')
@@ -74,14 +78,15 @@ $(document).ready(function () {
             $('#js-error-text').text('Bet rejected! Please try again.')
           }
           $('#js-error-wrapper').removeClass('d-none')
+          $('#js-set-prediction').prop('disabled', false).text('Place a bet')
         } else {
           showResults(predictionsInfo, 'set')
           getBalance(function (balance) {
             $('.js-balance').text(parseFloat((balance / etherValue).toFixed(4)) + ' BNB')
           })
           // $('#js-predictioned-box').removeClass('d-none')
+          $('#js-set-prediction').prop('disabled', false).text('Bet Again')
         }
-        $('#js-set-prediction').prop('disabled', false).text('Bet Again')
       },
     )
   })

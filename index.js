@@ -5,6 +5,9 @@ $(document).ready(function () {
     let predictionsHTML = ''
     for (let i in predictions) {
       let prediction = predictions[i]
+      if ('canceled' === prediction.status) {
+        continue;
+      }
       prediction.remain_seconds = parseInt(prediction.started_at) - parseInt((new Date().getTime() / 1000))
       let prediction_key = prediction.category + '.' + prediction.type + '.' + prediction.group + '.' + prediction.team1 + '.' + prediction.team2;
       predictionsByKey[prediction_key] = prediction;
