@@ -10,7 +10,7 @@ $(document).ready(function () {
     // prediction.started_at = parseInt((new Date().getTime() / 1000) + 10)
     remain_seconds = parseInt(prediction.started_at) - parseInt((new Date().getTime() / 1000));
 
-    document.title = prediction.team1 + ' VS ' + prediction.team2 + ' prediction | Tornobet'
+    document.title = prediction.team1 + ' VS ' + prediction.team2 + ' Prediction | Tornobet'
     $('#js-group').text(prediction.groupTitle)
     $('.prediction-info #js-team1 .js-name').text(prediction.team1Title)
     $('.prediction-info #js-team1 .js-img').attr(
