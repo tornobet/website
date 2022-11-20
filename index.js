@@ -61,10 +61,10 @@ $(document).ready(function () {
         if ('active' === predictions[i].status) {
           let remain_seconds = parseInt(predictions[i].started_at) - parseInt((new Date().getTime() / 1000))
           if (!(remain_seconds >= 0)) {
-            return true
+            continue
           } else if (0 === remain_seconds) {
             betTimeout(i)
-            return true
+            continue
           }
           let days = parseInt(remain_seconds / 86400)
           remain_seconds -= days * 86400
