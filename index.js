@@ -12,7 +12,7 @@ $(document).ready(function () {
       let prediction_key = prediction.category + '.' + prediction.type + '.' + prediction.group + '.' + prediction.team1 + '.' + prediction.team2;
       predictionsByKey[prediction_key] = prediction;
       predictionsHTML +=
-        '<div class="col-lg-4 col-md-6" id="js-prediction-' + i + '-wrapper">\
+        '<div class="col-lg-6 col-md-6" id="js-prediction-' + i + '-wrapper">\
       <div class="prediction-box">\
           <div class="d-flex justify-content-between">\
               <img src="images/flags/' + prediction.team1 + '-thumb.png" alt="' + prediction.team1Title + ' flag" class="flag">\
